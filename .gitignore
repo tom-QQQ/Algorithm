@@ -84,5 +84,4 @@ value/
 *.txt
 
 ##忽略导入的包
-lib/
-*.jar
+src/lib/
