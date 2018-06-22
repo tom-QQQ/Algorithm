@@ -1,5 +1,6 @@
 package algorithm;
 
+import algorithm.function.Functions;
 import org.ujmp.core.Matrix;
 
 import java.util.ArrayList;
@@ -44,6 +45,26 @@ public class LogisticRegression extends BaseAlgorithm {
      */
     @Override
     Matrix calculateHypothesisMatrix(Matrix paramsMatrix, Matrix coefficientMatrix) {
-        return null;
+
+        Matrix resultMatrix = paramsMatrix.mtimes(coefficientMatrix);
+        sigmoidFunction(resultMatrix);
+
+        return resultMatrix;
+    }
+
+    /**
+     * 计算矩阵的sigmoid值
+     * @param hypothesisMatrix 假设矩阵
+     */
+    private void sigmoidFunction(Matrix hypothesisMatrix) {
+
+        for (int rowIndex = 1; rowIndex < hypothesisMatrix.getRowCount(); rowIndex++ ) {
+
+            for (int columnIndex = 0; columnIndex < hypothesisMatrix.getColumnCount(); columnIndex ++) {
+
+                double value = hypothesisMatrix.getAsFloat(rowIndex, columnIndex);
+                hypothesisMatrix.setAsDouble(Functions.sigmoid(value));
+            }
+        }
     }
 }

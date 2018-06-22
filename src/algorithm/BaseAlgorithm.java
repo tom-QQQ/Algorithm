@@ -115,7 +115,7 @@ import java.util.List;
 
 
     /**
-     * 随机初始化结果系数的值
+     * 随机初始化系数结果的值
      * @param coefficientsSize 系数个数
      * @return 初始结果系数List
      */
@@ -186,7 +186,7 @@ import java.util.List;
 
             Matrix hypothesisMatrix = calculateHypothesisMatrix(paramsMatrix, coefficientMatrix);
 
-            Matrix newCoefficientMatrix = calculateDifferenceCoefficientMatrix(hypothesisMatrix, paramsMatrix, resultsMatrix, coefficientMatrix);
+            Matrix newCoefficientMatrix = calculateNewCoefficientMatrix(hypothesisMatrix, paramsMatrix, resultsMatrix, coefficientMatrix);
 
             double currentCostValue = calculateCostWithMatrix(paramsMatrix, resultsMatrix, newCoefficientMatrix);
 
@@ -219,7 +219,7 @@ import java.util.List;
      * @param resultsMatrix 结果矩阵
      * @return 新参数和之前参数的差值
      */
-    private Matrix calculateDifferenceCoefficientMatrix(Matrix hypothesisMatrix, Matrix paramsMatrix, Matrix resultsMatrix, Matrix coefficientMatrix) {
+    private Matrix calculateNewCoefficientMatrix(Matrix hypothesisMatrix, Matrix paramsMatrix, Matrix resultsMatrix, Matrix coefficientMatrix) {
 
         Matrix differenceCoefficientMatrix = hypothesisMatrix.minus(resultsMatrix);
         differenceCoefficientMatrix = differenceCoefficientMatrix.transpose().mtimes(paramsMatrix).transpose();
