@@ -1,6 +1,6 @@
 package algorithm;
 
-import algorithm.function.Functions;
+import utils.Functions;
 import org.ujmp.core.Matrix;
 
 import java.util.ArrayList;

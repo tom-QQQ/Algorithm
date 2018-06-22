@@ -194,39 +194,6 @@ public class Utils {
         return result/dataList.size();
     }
 
-
-    /**
-     * 正态分布概率 e^-((x-η)^2/2σ^2)/((√2π)σ),这里用n替代η,用o替代σ
-     * @param x x
-     * @param n 期望
-     * @param o 标准差
-     * @return 概率
-     */
-    public static BigDecimal normalDistribution(double x, double n, double o) {
-
-        BigDecimal bigDecimalX = BigDecimal.valueOf(x);
-        BigDecimal bigDecimalN = BigDecimal.valueOf(n);
-        BigDecimal bigDecimalO = BigDecimal.valueOf(o);
-
-        BigDecimal molecular = bigDecimalX.subtract(bigDecimalN);
-        // (x-η)^2
-        molecular = molecular.multiply(molecular);
-
-        // 2σ^2
-        BigDecimal b = bigDecimalO.multiply(bigDecimalO).multiply(BigDecimal.valueOf(2));
-
-        // ((x-η)^2/2σ^2)
-        molecular = molecular.divide(b, 10, BigDecimal. ROUND_HALF_UP);
-
-        // e^-((x-η)^2/2σ^2)
-        molecular = BigDecimal.valueOf(StrictMath.pow(Math.E, -molecular.doubleValue()));
-
-        // 分母 (√2π)σ
-        BigDecimal denominator = BigDecimal.valueOf(StrictMath.sqrt(2 * Math.PI)).multiply(bigDecimalO);
-
-        return molecular.divide(denominator, 10, BigDecimal.ROUND_HALF_UP);
-    }
-
     /**
      * 打印list
      * @param list 需要打印的list,只能打印泛型为可直接打印出值的list
