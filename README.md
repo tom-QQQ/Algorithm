@@ -1,4 +1,4 @@
-# ning.algorithm
+# algorithm
 
 线性回归梯度下降
 
