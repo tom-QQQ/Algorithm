@@ -1,4 +1,4 @@
-package algorithm;
+package algorithm.gradient.descent;
 
 
 import org.apache.commons.math3.linear.RealMatrix;
@@ -13,37 +13,17 @@ import java.util.List;
  * @author Ning
  * @date Create in 2018/5/31
  */
-public class LinearRegression extends BaseAlgorithm {
+public class LinearRegression extends BaseAbstractCalculateAlgorithm {
 
 
     public void calculateExampleResult() {
 
         List<List<Double>> dataParamsList = new ArrayList<>();
 
-        List<Double> dataParams = new ArrayList<>();
-        dataParams.add(2104.0);
-        dataParams.add(5.0);
-        dataParams.add(1.0);
-        dataParams.add(45.0);
-        addListToListAndClear(dataParamsList, dataParams);
-
-        dataParams.add(1416.0);
-        dataParams.add(3.0);
-        dataParams.add(2.0);
-        dataParams.add(40.0);
-        addListToListAndClear(dataParamsList, dataParams);
-
-        dataParams.add(1534.0);
-        dataParams.add(3.0);
-        dataParams.add(2.0);
-        dataParams.add(30.0);
-        addListToListAndClear(dataParamsList, dataParams);
-
-        dataParams.add(852.0);
-        dataParams.add(2.0);
-        dataParams.add(1.0);
-        dataParams.add(36.0);
-        addListToListAndClear(dataParamsList, dataParams);
+        addDataToDataParamsList(dataParamsList, 2104.0, 5.0, 1.0, 45.0);
+        addDataToDataParamsList(dataParamsList, 1416.0, 3.0, 2.0, 40.0);
+        addDataToDataParamsList(dataParamsList, 1534.0, 3.0, 2.0, 30.0);
+        addDataToDataParamsList(dataParamsList, 852.0, 2.0, 1.0, 36.0);
 
         List<Double> dataResults = new ArrayList<>();
         dataResults.add(460.0);
@@ -265,21 +245,6 @@ public class LinearRegression extends BaseAlgorithm {
         }
 
         return result/2/dataParams.size();
-    }
-
-    /**
-     * 计算假设结果
-     * @param dataParams 一条数据
-     * @param coefficientList 结果系数
-     * @return 假设结果
-     */
-    private double calculateHypothesisResult(List<Double> dataParams, List<Double> coefficientList) {
-
-        double result = 0.0;
-        for (int valueIndex = 0; valueIndex < dataParams.size(); valueIndex++) {
-            result += dataParams.get(valueIndex)*coefficientList.get(valueIndex);
-        }
-        return result;
     }
 
     /**

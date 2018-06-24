@@ -1,4 +1,4 @@
-package algorithm;
+package algorithm.gradient.descent;
 
 /**
  * @author Ning
