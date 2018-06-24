@@ -48,7 +48,7 @@ import java.util.List;
      * @param dataResults 结果list
      * @return 结果系数矩阵
      */
-    Matrix calculateRegressionResultByMatrixWithGradientDescent(List<List<Double>> dataParamsList, List<Double> dataResults) {
+    Matrix calculateRegressionResultByMatrixWithGradientDescent(List<List<Double>> dataParamsList, List<Double> dataResults, boolean ifNeedCalculateResult) {
 
         if (dataParamsList.size() != dataResults.size()) {
             System.out.println("参数list数量和结果数量不同");
@@ -57,7 +57,7 @@ import java.util.List;
 
         List<List<Double>> normalizationDataList = calculateNormalizationData(dataParamsList);
 
-        if (normalizationDataList == null) {
+        if (normalizationDataList == null || !ifNeedCalculateResult) {
             return null;
         }
 

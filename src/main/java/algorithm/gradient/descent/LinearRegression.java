@@ -39,7 +39,7 @@ public class LinearRegression extends BaseAbstractCalculateAlgorithm {
 //        }
 
         // 矩阵回归
-        Matrix result = calculateRegressionResultByMatrixWithGradientDescent(dataParamsList, dataResults);
+        Matrix result = calculateRegressionResultByMatrixWithGradientDescent(dataParamsList, dataResults, true);
         System.out.println(result);
 
 //        RealMatrix realResult = calculateResult(dataParamsList, dataResults);
@@ -67,7 +67,7 @@ public class LinearRegression extends BaseAbstractCalculateAlgorithm {
         dataParams.add(5.0);
         dataParams.add(1.0);
         dataParams.add(45.0);
-        normalListValue(dataParams, averageValues, squaredDifferenceValues);
+        normalListValue(dataParams);
         double result = calculateHypothesisResult(dataParams, coefficient);
         dataParams.clear();
         System.out.println(result);
@@ -78,7 +78,7 @@ public class LinearRegression extends BaseAbstractCalculateAlgorithm {
         dataParams.add(3.0);
         dataParams.add(2.0);
         dataParams.add(40.0);
-        normalListValue(dataParams, averageValues, squaredDifferenceValues);
+        normalListValue(dataParams);
         result = calculateHypothesisResult(dataParams, coefficient);
         dataParams.clear();
         System.out.println(result);
@@ -89,7 +89,7 @@ public class LinearRegression extends BaseAbstractCalculateAlgorithm {
         dataParams.add(3.0);
         dataParams.add(2.0);
         dataParams.add(30.0);
-        normalListValue(dataParams, averageValues, squaredDifferenceValues);
+        normalListValue(dataParams);
         result = calculateHypothesisResult(dataParams, coefficient);
         dataParams.clear();
         System.out.println(result);
@@ -100,20 +100,11 @@ public class LinearRegression extends BaseAbstractCalculateAlgorithm {
         dataParams.add(2.0);
         dataParams.add(1.0);
         dataParams.add(36.0);
-        normalListValue(dataParams, averageValues, squaredDifferenceValues);
+        normalListValue(dataParams);
         result = calculateHypothesisResult(dataParams, coefficient);
         dataParams.clear();dataParams.clear();
         System.out.println(result);
 
-    }
-
-    private <T> void addListToListAndClear(List<List<T>> dataParamsList, List<T> dataParams) {
-
-        List<T> storedList = new ArrayList<>(dataParams.size());
-        storedList.addAll(dataParams);
-        Collections.copy(storedList, dataParams);
-        dataParamsList.add(storedList);
-        dataParams.clear();
     }
 
     /**

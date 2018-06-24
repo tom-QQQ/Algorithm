@@ -33,7 +33,7 @@ public class LogisticRegression extends BaseAbstractCalculateAlgorithm {
         dataResults.add(0.0);
 
 
-        Matrix result = calculateRegressionResultByMatrixWithGradientDescent(dataParamsList, dataResults);
+        Matrix result = calculateRegressionResultByMatrixWithGradientDescent(dataParamsList, dataResults, false);
         System.out.println(result);
     }
 
@@ -49,7 +49,7 @@ public class LogisticRegression extends BaseAbstractCalculateAlgorithm {
         dataParams.add(0.0);
         dataParams.add(0.0);
 
-        normalListValue(dataParams, averageValues, squaredDifferenceValues);
+        normalListValue(dataParams);
         double result = calculateHypothesisResult(dataParams, coefficient);
         result = Functions.sigmoid(result);
         dataParams.clear();
