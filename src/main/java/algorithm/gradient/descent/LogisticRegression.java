@@ -2,6 +2,7 @@ package algorithm.gradient.descent;
 
 import org.ujmp.core.Matrix;
 import org.ujmp.core.calculation.Calculation;
+import utils.Functions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +34,25 @@ public class LogisticRegression extends BaseAbstractCalculateAlgorithm {
 
 
         Matrix result = calculateRegressionResultByMatrixWithGradientDescent(dataParamsList, dataResults);
+        System.out.println(result);
+    }
+
+    public void verificationResult() {
+
+        List<Double> coefficient = new ArrayList<>();
+        coefficient.add(12.5553);
+        coefficient.add(27.0026);
+        coefficient.add(7.1081);
+
+        List<Double> dataParams = new ArrayList<>();
+        dataParams.add(1.0);
+        dataParams.add(0.0);
+        dataParams.add(0.0);
+
+        normalListValue(dataParams, averageValues, squaredDifferenceValues);
+        double result = calculateHypothesisResult(dataParams, coefficient);
+        result = Functions.sigmoid(result);
+        dataParams.clear();
         System.out.println(result);
     }
 

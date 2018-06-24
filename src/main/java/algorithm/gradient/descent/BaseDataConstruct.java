@@ -24,27 +24,6 @@ class BaseDataConstruct extends BaseExamine {
     }
 
     /**
-     * 对原始数据进行规格化操作，并在每列数据添加一个1
-     * @param dataParamsList 原始数据
-     * @return 规格化结果
-     */
-    List<List<Double>> calculateNormalizationData(List<List<Double>> dataParamsList) {
-
-        List<Double> averageValues = calculateAverageValueList(dataParamsList);
-        this.averageValues.addAll(averageValues);
-
-        List<Double> squaredDifferenceList = calculateStandardDeviationList(dataParamsList, averageValues);
-        this.squaredDifferenceValues.addAll(squaredDifferenceList);
-
-        if (averageValues.size() != squaredDifferenceList.size() || averageValues.size() != dataParamsList.get(0).size()) {
-            System.out.println("参数平均值数量和方差结果数量和参数list数量三者不相同");
-            return null;
-        }
-
-        return getNormalizationParamsList(dataParamsList, averageValues, squaredDifferenceList);
-    }
-
-    /**
      * 计算给定List<>中List的平均值
      * @param dataParams 需要计算的数据
      * @return 平均值list
@@ -181,5 +160,26 @@ class BaseDataConstruct extends BaseExamine {
         boolean ifNegative = Math.random() < 0.5;
 
         return (ifNegative ? -number : number);
+    }
+
+    /**
+     * 对原始数据进行规格化操作，并在每列数据添加一个1，该方法无需在子类中调用
+     * @param dataParamsList 原始数据
+     * @return 规格化结果
+     */
+    List<List<Double>> calculateNormalizationData(List<List<Double>> dataParamsList) {
+
+        List<Double> averageValues = calculateAverageValueList(dataParamsList);
+        this.averageValues.addAll(averageValues);
+
+        List<Double> squaredDifferenceList = calculateStandardDeviationList(dataParamsList, averageValues);
+        this.squaredDifferenceValues.addAll(squaredDifferenceList);
+
+        if (averageValues.size() != squaredDifferenceList.size() || averageValues.size() != dataParamsList.get(0).size()) {
+            System.out.println("参数平均值数量和方差结果数量和参数list数量三者不相同");
+            return null;
+        }
+
+        return getNormalizationParamsList(dataParamsList, averageValues, squaredDifferenceList);
     }
 }
