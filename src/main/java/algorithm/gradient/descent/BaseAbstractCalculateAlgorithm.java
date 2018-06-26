@@ -2,6 +2,7 @@ package algorithm.gradient.descent;
 
 
 import org.ujmp.core.Matrix;
+import org.ujmp.core.calculation.Calculation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.List;
     double declineValue;
     long maxLoop;
     double convergence;
+    double lambda;
 
     {
         initialNumberRange = 100;
@@ -23,21 +25,22 @@ import java.util.List;
         declineValue = 0.618;
         maxLoop = 1000L;
         convergence = 0.0001;
+        lambda = 1.0;
     }
 
     /**
      * 计算代价,Jθ
-     * @param paramsMatrix 数据矩阵
-     * @param resultsMatrix 结果矩阵
-     * @param coefficientMatrix 系数矩阵
+     * @param paramsMatrix 数据矩阵 m*n
+     * @param resultsMatrix 结果矩阵 m*1
+     * @param coefficientMatrix 系数矩阵 n*1
      * @return 代价
      */
     abstract Double calculateCostWithMatrix(Matrix paramsMatrix, Matrix resultsMatrix, Matrix coefficientMatrix);
 
     /**
      * 计算假设值矩阵，hθ(x)
-     * @param paramsMatrix 数据矩阵
-     * @param coefficientMatrix 系数矩阵
+     * @param paramsMatrix 数据矩阵 m*n
+     * @param coefficientMatrix 系数矩阵 n*1
      * @return 新的系数矩阵
      */
     abstract Matrix calculateHypothesisMatrix(Matrix paramsMatrix, Matrix coefficientMatrix);
@@ -72,9 +75,9 @@ import java.util.List;
 
     /**
      * 迭代计算系数结果
-     * @param paramsMatrix 数据矩阵
-     * @param resultsMatrix 结果矩阵
-     * @param coefficientMatrix 系数矩阵
+     * @param paramsMatrix 数据矩阵 m*n
+     * @param resultsMatrix 结果矩阵 m*1
+     * @param coefficientMatrix 系数矩阵 n*1
      * @return 最终迭代结果
      */
     private Matrix calculateCoefficientWithIterative(Matrix paramsMatrix, Matrix resultsMatrix, Matrix coefficientMatrix) {
@@ -121,9 +124,9 @@ import java.util.List;
     }
 
     /**
-     * 根据规格化完成的数据创建矩阵，该方法无需在子类中调用
+     * 根据完成规格化的数据创建矩阵，该方法无需在子类中调用
      * @param dataParamsList 规格化完毕的数据
-     * @return 对应矩阵
+     * @return 对应矩阵 m*n
      */
     Matrix getParamsMatrix(List<List<Double>> dataParamsList) {
 
@@ -160,19 +163,72 @@ import java.util.List;
     }
 
     /**
-     * 计算新参数和之前参数的差值，公式： ɑ/m[(hθ(x)-y)^T*x]^T
-     * @param hypothesisMatrix 假设结果矩阵
-     * @param paramsMatrix 参数矩阵
-     * @param resultsMatrix 结果矩阵
-     * @return 新参数和之前参数的差值
+     * 计算新参数和之前参数的差值，公式： θ(1 - ɑ*(λ/m)) - ɑ/m[(hθ(x) - y)^T*x]^T，除θ第一项
+     * @param hypothesisMatrix 假设结果矩阵 m*1
+     * @param paramsMatrix 参数矩阵 m*n
+     * @param resultsMatrix 结果矩阵 m*1
+     * @param coefficientMatrix 系数矩阵 n*1
+     * @return 新系数矩阵 n*1
      */
     private Matrix calculateNewCoefficientMatrix(Matrix hypothesisMatrix, Matrix paramsMatrix, Matrix resultsMatrix, Matrix coefficientMatrix) {
 
+        double previousTheta0Value = coefficientMatrix.getAsDouble(0, 0);
+        Matrix differenceCoefficientMatrix = calculateDifferenceCoefficientMatrix(hypothesisMatrix, paramsMatrix, resultsMatrix);
+
+        regularCoefficientMatrix(coefficientMatrix);
+
+        Matrix newCoefficientMatrix = coefficientMatrix.minus(differenceCoefficientMatrix);
+        changeTheta0ToRightValue(previousTheta0Value, differenceCoefficientMatrix, newCoefficientMatrix);
+        return newCoefficientMatrix;
+
+    }
+
+    /**
+     * 计算需要正则化系数值需要减去的值矩阵
+     * @param hypothesisMatrix 假设结果矩阵 m*1
+     * @param paramsMatrix 参数矩阵 m*n
+     * @param resultsMatrix 结果矩阵 m*1
+     * @return 需要减去的值的矩阵 n*1
+     */
+    private Matrix calculateDifferenceCoefficientMatrix(Matrix hypothesisMatrix, Matrix paramsMatrix, Matrix resultsMatrix) {
+
         Matrix differenceCoefficientMatrix = hypothesisMatrix.minus(resultsMatrix);
         differenceCoefficientMatrix = differenceCoefficientMatrix.transpose().mtimes(paramsMatrix).transpose();
-        differenceCoefficientMatrix =  differenceCoefficientMatrix.times(studyRate).divide(resultsMatrix.getRowCount());
+        return differenceCoefficientMatrix.times(studyRate).divide(resultsMatrix.getRowCount());
+    }
 
-        return coefficientMatrix.minus(differenceCoefficientMatrix);
+    /**
+     * “正则化”θ矩阵
+     * @param coefficientMatrix 正则化结果 n*1
+     */
+    private void regularCoefficientMatrix(Matrix coefficientMatrix) {
 
+        long size = coefficientMatrix.getRowCount();
+        for (int rowIndex = 0; rowIndex < size; rowIndex++) {
+            double value = coefficientMatrix.getAsDouble(rowIndex, 0);
+            double regularResult = calculateRegularResult(value, size);
+            coefficientMatrix.setAsDouble(regularResult, rowIndex, 0);
+        }
+    }
+
+    /**
+     * 计算“正则化”值
+     * @param value 需要正则化的值
+     * @return 正则化结果
+     */
+    private double calculateRegularResult(double value, long size) {
+        return value*(1 - studyRate*lambda/size);
+    }
+
+    /**
+     * 修正新的theta0的值
+     * @param previousTheta0Value 之前theta0的值
+     * @param differenceCoefficientMatrix 需要减去的值的矩阵 n*1
+     * @param newCoefficientMatrix 需要修改的系数矩阵 n*1
+     */
+    private void changeTheta0ToRightValue(double previousTheta0Value, Matrix differenceCoefficientMatrix, Matrix newCoefficientMatrix) {
+
+        double rightValue = previousTheta0Value - differenceCoefficientMatrix.getAsDouble(0, 0);
+        newCoefficientMatrix.setAsDouble(rightValue, 0, 0);
     }
 }

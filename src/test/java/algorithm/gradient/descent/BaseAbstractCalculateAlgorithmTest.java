@@ -16,15 +16,23 @@ import java.util.List;
  */
 public class BaseAbstractCalculateAlgorithmTest {
 
-    private List<Double> list;
+    private List<List<Double>> list = new ArrayList<>();
 
     @Before
     public void createList() {
-        list = new ArrayList<>();
-        list.add(1.0);
-        list.add(2.0);
-        list.add(Math.E);
-        list.add(10.0);
+        List<Double> listA = new ArrayList<>();
+        listA.add(1.0);
+        listA.add(2.0);
+        listA.add(Math.E);
+        listA.add(10.0);
+        list.add(listA);
+
+        List<Double> listB = new ArrayList<>();
+        listB.add(5.0);
+        listB.add(8.0);
+        listB.add(50.0);
+        listB.add(30.0);
+        list.add(listB);
     }
 
     @Test
@@ -65,9 +73,9 @@ public class BaseAbstractCalculateAlgorithmTest {
     @Test
     public void createMatrixWithList() {
         LogisticRegression baseAlgorithm = new LogisticRegression();
-        Matrix matrix = baseAlgorithm.createMatrixWithList(list);
-        matrix.log(Calculation.Ret.ORIG);
+        Matrix matrix = baseAlgorithm.getParamsMatrix(list);
         System.out.println(matrix);
+        System.out.println(matrix.selectColumns(Calculation.Ret.NEW, 0));
     }
 
     @Test

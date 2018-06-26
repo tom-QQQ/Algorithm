@@ -59,7 +59,7 @@ public class LogisticRegression extends BaseAbstractCalculateAlgorithm {
 
     /**
      * 计算逻辑回归代价，公式较为复杂，这里不给出，这里的处理方式为：当结果为0时，
-     * 假设值修改为1减去之前的假设值，结果为1时，假设值为本身，然后求出矩阵log值，计算全部值的和，再除以数据条数
+     * 假设值修改为1减去之前的假设值；结果为1时，假设值为本身，然后求出矩阵log值，计算全部值的和，除以数据条数后取相反数
      *
      * @param paramsMatrix 数据矩阵
      * @param resultsMatrix 结果矩阵
