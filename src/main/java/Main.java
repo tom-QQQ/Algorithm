@@ -1,3 +1,4 @@
+import algorithm.gradient.descent.LinearRegression;
 import algorithm.gradient.descent.LogisticRegression;
 
 /**
@@ -10,16 +11,16 @@ public class Main {
 
 //        KMeans.calculateExampleResult();
 
-//        LinearRegression regression = new LinearRegression();
+        LinearRegression regression = new LinearRegression(true, true);
 //
-//        regression.calculateExampleResult();
+        regression.calculateExampleResult();
 
 //        regression.verificationResult();
 
-        LogisticRegression logisticRegression = new LogisticRegression();
-        logisticRegression.calculateExampleResult();
+//        LogisticRegression logisticRegression = new LogisticRegression();
+//        logisticRegression.calculateExampleResult();
 
-        logisticRegression.verificationResult();
+//        logisticRegression.verificationResult();
 
     }
 }

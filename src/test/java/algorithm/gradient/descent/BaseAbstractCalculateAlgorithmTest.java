@@ -1,6 +1,5 @@
 package algorithm.gradient.descent;
 
-import algorithm.gradient.descent.LogisticRegression;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -74,7 +73,7 @@ public class BaseAbstractCalculateAlgorithmTest {
     public void createMatrixWithList() {
         LogisticRegression baseAlgorithm = new LogisticRegression();
         Matrix matrix = baseAlgorithm.getParamsMatrix(list);
-        System.out.println(matrix);
+        System.out.println(matrix.power(Calculation.Ret.NEW, 2.0));
         System.out.println(matrix.selectColumns(Calculation.Ret.NEW, 0));
     }
 

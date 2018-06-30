@@ -5,7 +5,6 @@ import org.apache.commons.math3.linear.RealMatrix;
 import org.ujmp.core.Matrix;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 
@@ -15,6 +14,16 @@ import java.util.List;
  */
 public class LinearRegression extends BaseAbstractCalculateAlgorithm {
 
+    /**
+     * 设置是否需要平方项和两两相乘项
+     * @param ifNeedSquare 是否需要平方项
+     * @param ifNeedTwoParamMultiply 是否需要两两相乘项
+     */
+    public LinearRegression(boolean ifNeedSquare, boolean ifNeedTwoParamMultiply) {
+
+        this.ifNeedSquare = ifNeedSquare;
+        this.ifNeedTwoParamMultiply = ifNeedTwoParamMultiply;
+    }
 
     public void calculateExampleResult() {
 
@@ -39,8 +48,7 @@ public class LinearRegression extends BaseAbstractCalculateAlgorithm {
 //        }
 
         // 矩阵回归
-        Matrix result = calculateRegressionResultByMatrixWithGradientDescent(dataParamsList, dataResults, true);
-        System.out.println(result);
+        calculateRegressionResultByMatrixWithGradientDescent(dataParamsList, dataResults, true);
 
 //        RealMatrix realResult = calculateResult(dataParamsList, dataResults);
 //        printMatrix(realResult);
@@ -55,11 +63,11 @@ public class LinearRegression extends BaseAbstractCalculateAlgorithm {
     public void verificationResult() {
 
         List<Double> coefficient = new ArrayList<>();
-        coefficient.add(296.25);
-        coefficient.add(109.5725);
-        coefficient.add(7.9889);
-        coefficient.add(-35.3777);
-        coefficient.add(-29.6244);
+        coefficient.add(296.2500);
+        coefficient.add(62.5568);
+        coefficient.add(56.9099);
+        coefficient.add(-25.4038);
+        coefficient.add(-32.8265);
 
         List<Double> dataParams = new ArrayList<>();
         dataParams.add(1.0);
@@ -108,10 +116,10 @@ public class LinearRegression extends BaseAbstractCalculateAlgorithm {
     }
 
     /**
-     * 计算代价, 公式: 1/(2*m)*sum[(x*theta-y).^2]
-     * @param paramsMatrix 数据矩阵
-     * @param resultsMatrix 结果矩阵
-     * @param coefficientMatrix 系数矩阵
+     * 计算正则化代价, 公式: 1/(2*m)*[∑(x*θ-y)^2 + λ∑θ^2)] ，不正则化常数项
+     * @param paramsMatrix 数据矩阵 m*n
+     * @param resultsMatrix 结果矩阵 m*1
+     * @param coefficientMatrix 系数矩阵 n*1
      * @return 线性回归代价
      */
     @Override
@@ -119,29 +127,34 @@ public class LinearRegression extends BaseAbstractCalculateAlgorithm {
 
         Matrix deviationMatrix = paramsMatrix.mtimes(coefficientMatrix).minus(resultsMatrix);
 
-        double errorResult = 0.0;
+        double costResult = 0.0;
 
         for (int row = 0; row < deviationMatrix.getRowCount(); row++) {
 
             Double originalValue = deviationMatrix.getAsDouble(row, 0);
-            errorResult += originalValue * originalValue;
+            costResult += originalValue * originalValue;
         }
 
-        return errorResult/resultsMatrix.getRowCount()/2;
+        costResult += calculateRegularPartCostValue(coefficientMatrix);
+
+        return costResult/resultsMatrix.getRowCount()/2;
     }
 
 
     /**
      * 计算假设值矩阵，公式：hθ(x) = x*theta
-     * @param paramsMatrix 数据矩阵
-     * @param coefficientMatrix 系数矩阵
-     * @return 新的系数矩阵
+     * @param paramsMatrix 数据矩阵 m*n
+     * @param coefficientMatrix 系数矩阵 n*1
+     * @return 新的系数矩阵 n*1
      */
     @Override
     Matrix calculateHypothesisMatrix(Matrix paramsMatrix, Matrix coefficientMatrix) {
 
          return paramsMatrix.mtimes(coefficientMatrix);
     }
+
+
+    // =================================以下为未使用矩阵未进行正则化进行的线性梯度下降=========================================
 
     /**
      * 使用梯度下降法计算线性方程参数
@@ -164,17 +177,6 @@ public class LinearRegression extends BaseAbstractCalculateAlgorithm {
         List<Double> coefficientList = initCoefficientList(dataParamsList.get(0).size() + 1);
 
         return calculateCoefficientListWithCycle(normalizationParamsList, dataResults,coefficientList);
-    }
-
-    /**
-     * 计算两个值的平方差
-     * @param valueOne 第一个值
-     * @param valueTwo 第二个值
-     * @return 平方差
-     */
-    private double calculateDeviationSquare(double valueOne, double valueTwo) {
-
-        return (valueOne - valueTwo)*(valueOne - valueTwo);
     }
 
     /**
@@ -236,6 +238,17 @@ public class LinearRegression extends BaseAbstractCalculateAlgorithm {
         }
 
         return result/2/dataParams.size();
+    }
+
+    /**
+     * 计算两个值的平方差
+     * @param valueOne 第一个值
+     * @param valueTwo 第二个值
+     * @return 平方差
+     */
+    private double calculateDeviationSquare(double valueOne, double valueTwo) {
+
+        return (valueOne - valueTwo)*(valueOne - valueTwo);
     }
 
     /**

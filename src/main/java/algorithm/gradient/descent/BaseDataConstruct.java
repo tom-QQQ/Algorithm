@@ -1,7 +1,10 @@
 package algorithm.gradient.descent;
 
+import org.apache.commons.collections15.list.TreeList;
+import org.ujmp.core.Matrix;
+
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -12,6 +15,9 @@ class BaseDataConstruct extends BaseExamine {
 
     int initialNumberRange;
 
+    boolean ifNeedSquare = false;
+    boolean ifNeedTwoParamMultiply = false;
+
     /**
      * 给参数数组添加数据
      * @param dataParamsList 参数数组
@@ -19,30 +25,36 @@ class BaseDataConstruct extends BaseExamine {
      */
     void addDataToDataParamsList(List<List<Double>> dataParamsList, Double...  values) {
 
-        List<Double> list = Arrays.asList(values);
+        List<Double> list = new ArrayList<>();
+        Collections.addAll(list, values);
+
+        if (ifNeedSquare) {
+            for (Double value : values) {
+                list.add(value*value);
+            }
+        }
+
+        if (ifNeedTwoParamMultiply) {
+            addArbitraryTwoParamMultiply(list, values.length);
+        }
+
         dataParamsList.add(list);
     }
 
     /**
-     * 计算给定List<>中List的平均值
-     * @param dataParams 需要计算的数据
-     * @return 平均值list
+     * 添加参数两两相乘项
+     * @param list 需要添加参数的列表
+     * @param originalSize 原始参数数量
      */
-    private List<Double> calculateAverageValueList(List<List<Double>> dataParams) {
+    private void addArbitraryTwoParamMultiply(List<Double> list, int originalSize) {
 
-        List<Double> averageValues = new ArrayList<>(dataParams.get(0).size());
+        for (int firstIndex = 0; firstIndex < originalSize; firstIndex++) {
 
-        for (int valueIndex = 0; valueIndex < dataParams.get(0).size(); valueIndex++) {
+            for (int secondIndex = firstIndex+1; secondIndex < originalSize; secondIndex++) {
 
-            Double sumValues = 0.0;
-            for (List<Double> valueList : dataParams) {
-                sumValues += valueList.get(valueIndex);
+                list.add(list.get(firstIndex)*list.get(secondIndex));
             }
-
-            averageValues.add(sumValues/dataParams.size());
         }
-
-        return averageValues;
     }
 
     /**
@@ -181,5 +193,27 @@ class BaseDataConstruct extends BaseExamine {
         }
 
         return getNormalizationParamsList(dataParamsList, averageValues, squaredDifferenceList);
+    }
+
+    /**
+     * 计算给定List<>中List的平均值
+     * @param dataParams 需要计算的数据
+     * @return 平均值list
+     */
+    private List<Double> calculateAverageValueList(List<List<Double>> dataParams) {
+
+        List<Double> averageValues = new ArrayList<>(dataParams.get(0).size());
+
+        for (int valueIndex = 0; valueIndex < dataParams.get(0).size(); valueIndex++) {
+
+            Double sumValues = 0.0;
+            for (List<Double> valueList : dataParams) {
+                sumValues += valueList.get(valueIndex);
+            }
+
+            averageValues.add(sumValues/dataParams.size());
+        }
+
+        return averageValues;
     }
 }

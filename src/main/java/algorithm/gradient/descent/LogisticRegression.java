@@ -32,9 +32,7 @@ public class LogisticRegression extends BaseAbstractCalculateAlgorithm {
         dataResults.add(1.0);
         dataResults.add(0.0);
 
-
-        Matrix result = calculateRegressionResultByMatrixWithGradientDescent(dataParamsList, dataResults, false);
-        System.out.println(result);
+        calculateRegressionResultByMatrixWithGradientDescent(dataParamsList, dataResults, true);
     }
 
     public void verificationResult() {

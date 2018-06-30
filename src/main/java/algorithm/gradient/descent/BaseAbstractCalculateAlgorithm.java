@@ -4,7 +4,7 @@ package algorithm.gradient.descent;
 import org.ujmp.core.Matrix;
 import org.ujmp.core.calculation.Calculation;
 
-import java.util.ArrayList;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -17,15 +17,24 @@ import java.util.List;
     double declineValue;
     long maxLoop;
     double convergence;
-    double lambda;
+    /**
+     * 正则系数，为0时不进行正则化,当正则系数较小但仍然大于0时，需要迭代计算更多次，但更容易发现相关性较小的参数，但再向0接近时，迭代次数又会减少
+     * 如果正则系数较大，则代价也会增加很多，推荐范围[0.005, 1]
+     */
+    private double lambda;
+
+    /**
+     * 初始范围和结果范围警告倍数
+     */
+    private int referenceInitAndActualTimes = 5;
 
     {
-        initialNumberRange = 100;
+        initialNumberRange = 10;
         studyRate = 1.0;
         declineValue = 0.618;
-        maxLoop = 1000L;
+        maxLoop = 1000000L;
         convergence = 0.0001;
-        lambda = 1.0;
+        lambda = 1;
     }
 
     /**
@@ -49,19 +58,24 @@ import java.util.List;
      * 借助矩阵使用梯度下降法计算系数结果
      * @param dataParamsList 数据list
      * @param dataResults 结果list
-     * @return 结果系数矩阵
      */
-    Matrix calculateRegressionResultByMatrixWithGradientDescent(List<List<Double>> dataParamsList, List<Double> dataResults, boolean ifNeedCalculateResult) {
+    void calculateRegressionResultByMatrixWithGradientDescent(List<List<Double>> dataParamsList, List<Double> dataResults, boolean ifNeedCalculateResult) {
 
         if (dataParamsList.size() != dataResults.size()) {
             System.out.println("参数list数量和结果数量不同");
-            return null;
+            return;
         }
 
         List<List<Double>> normalizationDataList = calculateNormalizationData(dataParamsList);
 
-        if (normalizationDataList == null || !ifNeedCalculateResult) {
-            return null;
+        if (normalizationDataList == null) {
+            System.out.println("规格化结果为空");
+            return;
+        }
+
+        if (!ifNeedCalculateResult) {
+            System.out.println("正在进行参数验证");
+            return;
         }
 
         Matrix paramsMatrix = getParamsMatrix(normalizationDataList);
@@ -70,7 +84,24 @@ import java.util.List;
         List<Double> coefficientList = initCoefficientList(dataParamsList.get(0).size() + 1);
         Matrix coefficientMatrix = createMatrixWithList(coefficientList);
 
-        return calculateCoefficientWithIterative(paramsMatrix, resultsMatrix, coefficientMatrix);
+        Matrix resultMatrix =  calculateCoefficientWithIterative(paramsMatrix, resultsMatrix, coefficientMatrix);
+        System.out.println(resultMatrix);
+
+        referenceInitCoefficientRange(resultMatrix);
+    }
+
+    /**
+     * 计算代价中的正则部分
+     * @param coefficientMatrix 结果矩阵
+     * @return 正则代价部分
+     */
+    double calculateRegularPartCostValue(Matrix coefficientMatrix) {
+
+        double theta0 = coefficientMatrix.getAsDouble(0, 0);
+        coefficientMatrix.setAsDouble(0.0, 0, 0);
+        double sumThetasSquare = coefficientMatrix.power(Calculation.Ret.NEW, 2.0).getValueSum();
+        coefficientMatrix.setAsDouble(theta0, 0, 0);
+        return sumThetasSquare*lambda;
     }
 
     /**
@@ -101,12 +132,14 @@ import java.util.List;
             } else {
 
                 if (couldStopStudy(previousCostValue, currentCostValue, convergence)) {
-                    System.out.println("计算了" + calculateTimes + "次，迭代达到目标精度，迭代停止。 最终代价：" + currentCostValue);
+                    double realCost = realCost(newCoefficientMatrix, currentCostValue, resultsMatrix.getRowCount());
+                    System.out.println("计算了" + calculateTimes + "次，迭代达到目标精度，迭代停止。 最终去除正则部分代价：" + realCost);
                     return newCoefficientMatrix;
                 }
 
                 if (calculateTimes == maxLoop) {
-                    System.out.println("达到最大迭代次数" + maxLoop + "，迭代停止。 最终代价" + currentCostValue);
+                    double realCost = realCost(newCoefficientMatrix, currentCostValue, resultsMatrix.getRowCount());
+                    System.out.println("达到最大迭代次数" + maxLoop + "，迭代停止。 最终去除正则部分代价：" + realCost);
                     return newCoefficientMatrix;
                 }
             }
@@ -163,7 +196,7 @@ import java.util.List;
     }
 
     /**
-     * 计算新参数和之前参数的差值，公式： θ(1 - ɑ*(λ/m)) - ɑ/m[(hθ(x) - y)^T*x]^T，除θ第一项
+     * 计算新参数和之前参数的差值，公式： θ(1 - ɑ*(λ/m)) - ɑ/m[(hθ(x) - y)^T*x]^T，计算θ第一项时，λ为0
      * @param hypothesisMatrix 假设结果矩阵 m*1
      * @param paramsMatrix 参数矩阵 m*n
      * @param resultsMatrix 结果矩阵 m*1
@@ -230,5 +263,34 @@ import java.util.List;
 
         double rightValue = previousTheta0Value - differenceCoefficientMatrix.getAsDouble(0, 0);
         newCoefficientMatrix.setAsDouble(rightValue, 0, 0);
+    }
+
+    /**
+     * 去除正则部分求出实际的代价
+     * @param coefficientMatrix 结果矩阵
+     * @param costValue 正则代价
+     * @return 减去正则代价的代价
+     */
+    private double realCost(Matrix coefficientMatrix, double costValue, long rowCount) {
+
+        double sumThetasSquare = calculateRegularPartCostValue(coefficientMatrix);
+        return costValue - sumThetasSquare/2/rowCount;
+    }
+
+
+    /**
+     * 打印建议初始值范围，除去最大数的平均值
+     * @param resultMatrix 系数结果矩阵
+     */
+    private void referenceInitCoefficientRange(Matrix resultMatrix) {
+
+        double maxValue = resultMatrix.getMaxValue();
+        double sumValue = resultMatrix.getAbsoluteValueSum();
+        double referenceValue = (sumValue - maxValue)/(resultMatrix.getRowCount() - 1);
+        referenceValue = BigDecimal.valueOf(referenceValue).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
+
+        if (Math.max(referenceValue, initialNumberRange)/Math.min(referenceValue, initialNumberRange) > referenceInitAndActualTimes) {
+            System.out.println("根据系数结果，推荐初始结果系数范围最大绝对值为: " + referenceValue);
+        }
     }
 }
