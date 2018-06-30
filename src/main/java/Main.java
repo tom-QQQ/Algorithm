@@ -12,13 +12,13 @@ public class Main {
 //        KMeans.calculateExampleResult();
 
         LinearRegression regression = new LinearRegression(true, true);
-//
-        regression.calculateExampleResult();
+
+//        regression.calculateExampleResult();
 
 //        regression.verificationResult();
 
-//        LogisticRegression logisticRegression = new LogisticRegression();
-//        logisticRegression.calculateExampleResult();
+        LogisticRegression logisticRegression = new LogisticRegression(false, false);
+        logisticRegression.calculateExampleResult();
 
 //        logisticRegression.verificationResult();
 

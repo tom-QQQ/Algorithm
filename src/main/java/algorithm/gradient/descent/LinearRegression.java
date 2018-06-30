@@ -21,8 +21,7 @@ public class LinearRegression extends BaseAbstractCalculateAlgorithm {
      */
     public LinearRegression(boolean ifNeedSquare, boolean ifNeedTwoParamMultiply) {
 
-        this.ifNeedSquare = ifNeedSquare;
-        this.ifNeedTwoParamMultiply = ifNeedTwoParamMultiply;
+        super(ifNeedSquare, ifNeedTwoParamMultiply);
     }
 
     public void calculateExampleResult() {
@@ -48,7 +47,7 @@ public class LinearRegression extends BaseAbstractCalculateAlgorithm {
 //        }
 
         // 矩阵回归
-        calculateRegressionResultByMatrixWithGradientDescent(dataParamsList, dataResults, true);
+        calculateRegressionResultByMatrixWithGradientDescent(dataParamsList, dataResults, false);
 
 //        RealMatrix realResult = calculateResult(dataParamsList, dataResults);
 //        printMatrix(realResult);
@@ -202,7 +201,7 @@ public class LinearRegression extends BaseAbstractCalculateAlgorithm {
 
             } else {
 
-                if (couldStopStudy(previousCostValue, currentCostValue, convergence)) {
+                if (couldStopStudy(previousCostValue, currentCostValue)) {
                     System.out.println("计算了" + calculateTimes + "次，迭代达到目标精度，迭代停止。 最终代价：" + currentCostValue);
                     return newCoefficientList;
                 }

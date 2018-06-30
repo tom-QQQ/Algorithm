@@ -1,8 +1,5 @@
 package algorithm.gradient.descent;
 
-import org.apache.commons.collections15.list.TreeList;
-import org.ujmp.core.Matrix;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -15,8 +12,19 @@ class BaseDataConstruct extends BaseExamine {
 
     int initialNumberRange;
 
-    boolean ifNeedSquare = false;
-    boolean ifNeedTwoParamMultiply = false;
+    private boolean ifNeedSquare;
+    private boolean ifNeedTwoParamMultiply;
+
+    /**
+     * 数据构建构造器，是否需要添加平方项和两两参数相乘项
+     * @param ifNeedSquare 是否需要添加平方项
+     * @param ifNeedTwoParamMultiply 是否需要添加两两参数相乘项
+     */
+    BaseDataConstruct(boolean ifNeedSquare, boolean ifNeedTwoParamMultiply) {
+
+        this.ifNeedSquare = ifNeedSquare;
+        this.ifNeedTwoParamMultiply = ifNeedTwoParamMultiply;
+    }
 
     /**
      * 给参数数组添加数据

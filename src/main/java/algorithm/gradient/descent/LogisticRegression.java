@@ -13,6 +13,11 @@ import java.util.List;
  */
 public class LogisticRegression extends BaseAbstractCalculateAlgorithm {
 
+    public LogisticRegression(boolean ifNeedSquare, boolean ifNeedTwoParamMultiply) {
+
+        super(ifNeedSquare, ifNeedTwoParamMultiply);
+    }
+
     public void calculateExampleResult() {
 
         List<List<Double>> dataParamsList = new ArrayList<>();

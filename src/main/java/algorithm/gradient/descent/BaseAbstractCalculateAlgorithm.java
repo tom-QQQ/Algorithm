@@ -32,9 +32,14 @@ import java.util.List;
         initialNumberRange = 10;
         studyRate = 1.0;
         declineValue = 0.618;
-        maxLoop = 1000000L;
+        maxLoop = 1000L;
         convergence = 0.0001;
         lambda = 1;
+    }
+
+    BaseAbstractCalculateAlgorithm(boolean ifNeedSquare, boolean ifNeedTwoParamMultiply) {
+
+        super(ifNeedSquare, ifNeedTwoParamMultiply);
     }
 
     /**
@@ -131,7 +136,7 @@ import java.util.List;
 
             } else {
 
-                if (couldStopStudy(previousCostValue, currentCostValue, convergence)) {
+                if (couldStopStudy(previousCostValue, currentCostValue)) {
                     double realCost = realCost(newCoefficientMatrix, currentCostValue, resultsMatrix.getRowCount());
                     System.out.println("计算了" + calculateTimes + "次，迭代达到目标精度，迭代停止。 最终去除正则部分代价：" + realCost);
                     return newCoefficientMatrix;
@@ -149,11 +154,17 @@ import java.util.List;
         }
     }
 
-    boolean couldStopStudy(double previousCostValue, double currentCostValue, double costMinValue) {
+    /**
+     * 判断是否需要停止迭代，该方法无需在子类中调用
+     * @param previousCostValue 之前的代价
+     * @param currentCostValue 当前代价
+     * @return 是否需要停止迭代
+     */
+    boolean couldStopStudy(double previousCostValue, double currentCostValue) {
 
         double difference = previousCostValue - currentCostValue;
 
-        return difference < costMinValue;
+        return difference < convergence;
     }
 
     /**
