@@ -79,9 +79,6 @@ npm-debug.log
 .project
 *.log
 
-##忽略数据结果文件
+##ignore data result
 value/
 *.txt
-
-##忽略导入的包
-src/lib/
