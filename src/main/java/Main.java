@@ -11,7 +11,7 @@ public class Main {
 
 //        KMeans.calculateExampleResult();
 
-        LinearRegression regression = new LinearRegression(true, true);
+//        LinearRegression regression = new LinearRegression(false, false);
 
 //        regression.calculateExampleResult();
 
@@ -19,7 +19,7 @@ public class Main {
 
         LogisticRegression logisticRegression = new LogisticRegression(false, false);
         logisticRegression.calculateExampleResult();
-
+//
 //        logisticRegression.verificationResult();
 
     }

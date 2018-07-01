@@ -170,7 +170,7 @@ class BaseDataConstruct extends BaseExamine {
     }
 
     /**
-     * 生成指定绝对值范围内的随机值
+     * 生成指定范围内的随机值
      * @return 指定范围的随机值
      */
     private double createInitNumberInRange() {
@@ -183,7 +183,7 @@ class BaseDataConstruct extends BaseExamine {
     }
 
     /**
-     * 对原始数据进行规格化操作，并在每列数据添加一个1，该方法无需在子类中调用
+     * 对原始数据进行规格化操作，并在每列数据前添加一个1，该方法无需在子类中调用
      * @param dataParamsList 原始数据
      * @return 规格化结果
      */

@@ -16,7 +16,7 @@ import java.util.List;
     double studyRate;
     double declineValue;
     long maxLoop;
-    double convergence;
+    private double convergence;
     /**
      * 正则系数，为0时不进行正则化,当正则系数较小但仍然大于0时，需要迭代计算更多次，但更容易发现相关性较小的参数，但再向0接近时，迭代次数又会减少
      * 如果正则系数较大，则代价也会增加很多，推荐范围[0.005, 1]
@@ -24,7 +24,7 @@ import java.util.List;
     private double lambda;
 
     /**
-     * 初始范围和结果范围警告倍数
+     * 初始范围和结果范围差值倍数提示值
      */
     private int referenceInitAndActualTimes = 5;
 
@@ -34,7 +34,7 @@ import java.util.List;
         declineValue = 0.618;
         maxLoop = 1000L;
         convergence = 0.0001;
-        lambda = 1;
+        lambda = 0.0;
     }
 
     BaseAbstractCalculateAlgorithm(boolean ifNeedSquare, boolean ifNeedTwoParamMultiply) {
@@ -96,11 +96,15 @@ import java.util.List;
     }
 
     /**
-     * 计算代价中的正则部分
+     * 计算代价中的正则部分，λ∑θ^2，不包括θ0
      * @param coefficientMatrix 结果矩阵
-     * @return 正则代价部分
+     * @return 代价中的正则部分
      */
     double calculateRegularPartCostValue(Matrix coefficientMatrix) {
+
+        if (lambda == 0.0) {
+            return lambda;
+        }
 
         double theta0 = coefficientMatrix.getAsDouble(0, 0);
         coefficientMatrix.setAsDouble(0.0, 0, 0);
@@ -261,11 +265,12 @@ import java.util.List;
      * @return 正则化结果
      */
     private double calculateRegularResult(double value, long size) {
+
         return value*(1 - studyRate*lambda/size);
     }
 
     /**
-     * 修正新的theta0的值
+     * 修正新的theta0的值，用之前保存的theta0减去变化值，并存储到新系数结果矩阵中
      * @param previousTheta0Value 之前theta0的值
      * @param differenceCoefficientMatrix 需要减去的值的矩阵 n*1
      * @param newCoefficientMatrix 需要修改的系数矩阵 n*1
@@ -284,24 +289,29 @@ import java.util.List;
      */
     private double realCost(Matrix coefficientMatrix, double costValue, long rowCount) {
 
-        double sumThetasSquare = calculateRegularPartCostValue(coefficientMatrix);
-        return costValue - sumThetasSquare/2/rowCount;
+        double regularPartCostValue = calculateRegularPartCostValue(coefficientMatrix);
+        return costValue - regularPartCostValue/2/rowCount;
     }
 
 
     /**
-     * 打印建议初始值范围，除去最大数的平均值
+     * 打印建议初始值范围，除去最大值和最小值后的的平均值，只会在设置的范围和建议范围的差距大于referenceInitAndActualTimes - 1倍时会提示
      * @param resultMatrix 系数结果矩阵
      */
     private void referenceInitCoefficientRange(Matrix resultMatrix) {
 
-        double maxValue = resultMatrix.getMaxValue();
+        if (resultMatrix.getRowCount() < 4) {
+            return;
+        }
+
+        double maxValue = Math.abs(resultMatrix.getMaxValue());
+        double minValue = Math.abs(resultMatrix.getMinValue());
         double sumValue = resultMatrix.getAbsoluteValueSum();
-        double referenceValue = (sumValue - maxValue)/(resultMatrix.getRowCount() - 1);
-        referenceValue = BigDecimal.valueOf(referenceValue).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
+        double referenceValue = (sumValue - maxValue - minValue)/(resultMatrix.getRowCount() - 2);
+        referenceValue = BigDecimal.valueOf(referenceValue).setScale(-1, BigDecimal.ROUND_HALF_UP).intValue();
 
         if (Math.max(referenceValue, initialNumberRange)/Math.min(referenceValue, initialNumberRange) > referenceInitAndActualTimes) {
-            System.out.println("根据系数结果，推荐初始结果系数范围最大绝对值为: " + referenceValue);
+            System.out.println("根据系数结果，推荐初始结果系数最大绝对值为: " + referenceValue);
         }
     }
 }

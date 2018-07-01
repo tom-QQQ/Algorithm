@@ -47,7 +47,7 @@ public class LinearRegression extends BaseAbstractCalculateAlgorithm {
 //        }
 
         // 矩阵回归
-        calculateRegressionResultByMatrixWithGradientDescent(dataParamsList, dataResults, false);
+        calculateRegressionResultByMatrixWithGradientDescent(dataParamsList, dataResults, true);
 
 //        RealMatrix realResult = calculateResult(dataParamsList, dataResults);
 //        printMatrix(realResult);

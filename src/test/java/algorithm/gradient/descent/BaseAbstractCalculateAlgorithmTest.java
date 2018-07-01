@@ -71,7 +71,7 @@ public class BaseAbstractCalculateAlgorithmTest {
 
     @Test
     public void createMatrixWithList() {
-        LogisticRegression baseAlgorithm = new LogisticRegression();
+        LogisticRegression baseAlgorithm = new LogisticRegression(false, false);
         Matrix matrix = baseAlgorithm.getParamsMatrix(list);
         System.out.println(matrix.power(Calculation.Ret.NEW, 2.0));
         System.out.println(matrix.selectColumns(Calculation.Ret.NEW, 0));
