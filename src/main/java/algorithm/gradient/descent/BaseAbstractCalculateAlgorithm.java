@@ -29,12 +29,12 @@ import java.util.List;
     private int referenceInitAndActualTimes = 5;
 
     {
-        initialNumberRange = 10;
+        initialNumberRange = 0;
         studyRate = 1.0;
         declineValue = 0.618;
         maxLoop = 1000L;
         convergence = 0.0001;
-        lambda = 0.0;
+        lambda = 1.0;
     }
 
     BaseAbstractCalculateAlgorithm(boolean ifNeedSquare, boolean ifNeedTwoParamMultiply) {
@@ -308,10 +308,13 @@ import java.util.List;
         double minValue = Math.abs(resultMatrix.getMinValue());
         double sumValue = resultMatrix.getAbsoluteValueSum();
         double referenceValue = (sumValue - maxValue - minValue)/(resultMatrix.getRowCount() - 2);
-        referenceValue = BigDecimal.valueOf(referenceValue).setScale(-1, BigDecimal.ROUND_HALF_UP).intValue();
+        int referenceIntValue = BigDecimal.valueOf(referenceValue).setScale(-1, BigDecimal.ROUND_HALF_UP).intValue();
 
         if (Math.max(referenceValue, initialNumberRange)/Math.min(referenceValue, initialNumberRange) > referenceInitAndActualTimes) {
-            System.out.println("根据系数结果，推荐初始结果系数最大绝对值为: " + referenceValue);
+
+            if (referenceIntValue != initialNumberRange) {
+                System.out.println("根据系数结果，推荐初始结果系数最大绝对值为: " + referenceIntValue);
+            }
         }
     }
 }
