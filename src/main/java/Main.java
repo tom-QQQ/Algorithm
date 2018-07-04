@@ -17,7 +17,7 @@ public class Main {
 
 //        regression.verificationResult();
 
-        LogisticRegression logisticRegression = new LogisticRegression(false, true);
+        LogisticRegression logisticRegression = new LogisticRegression(true, true);
         logisticRegression.calculateExampleResult();
 //
 //        logisticRegression.verificationResult();
