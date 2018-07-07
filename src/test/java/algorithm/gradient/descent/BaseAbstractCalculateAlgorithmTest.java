@@ -26,12 +26,12 @@ public class BaseAbstractCalculateAlgorithmTest {
         listA.add(10.0);
         list.add(listA);
 
-        List<Double> listB = new ArrayList<>();
-        listB.add(5.0);
-        listB.add(8.0);
-        listB.add(50.0);
-        listB.add(30.0);
-        list.add(listB);
+//        List<Double> listB = new ArrayList<>();
+//        listB.add(5.0);
+//        listB.add(8.0);
+//        listB.add(50.0);
+//        listB.add(30.0);
+//        list.add(listB);
     }
 
     @Test
@@ -73,8 +73,18 @@ public class BaseAbstractCalculateAlgorithmTest {
     public void createMatrixWithList() {
         LogisticRegression baseAlgorithm = new LogisticRegression(false, false);
         Matrix matrix = baseAlgorithm.getParamsMatrix(list);
-        System.out.println(matrix.power(Calculation.Ret.NEW, 2.0));
-        System.out.println(matrix.selectColumns(Calculation.Ret.NEW, 0));
+
+        List<List<Double>> dataList = new ArrayList<>();
+        List<Double> list = new ArrayList<>();
+        list.add(1.0);
+        list.add(2.0);
+        list.add(0.0);
+        list.add(3.0);
+        dataList.add(list);
+
+        Matrix powerMatrix = baseAlgorithm.getParamsMatrix(dataList);
+
+        System.out.println(matrix.power(Calculation.Ret.NEW, powerMatrix));
     }
 
     @Test
