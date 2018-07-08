@@ -11,31 +11,12 @@ import java.util.List;
  * @author Ning
  * @date Create in 2018/6/19
  */
- abstract class BaseAbstractCalculateAlgorithm extends BaseDataConstruct {
-
-    double studyRate;
-    double declineValue;
-    long maxLoop;
-    private double convergence;
-    /**
-     * 正则系数，为0时不进行正则化,当正则系数较小但仍然大于0时，需要迭代计算更多次，但更容易发现相关性较小的参数，但再向0接近时，迭代次数又会减少
-     * 如果正则系数较大，则代价也会增加很多，推荐范围[0.005, 1]
-     */
-    private double lambda;
+ abstract class BaseAbstractCalculateAlgorithm extends BaseDataConstructForRegression {
 
     /**
      * 初始范围和结果范围差值倍数提示值
      */
     private int referenceInitAndActualTimes = 5;
-
-    {
-        initialNumberRange = 0;
-        studyRate = 1.0;
-        declineValue = 0.618;
-        maxLoop = 1000L;
-        convergence = 0.0001;
-        lambda = 1.0;
-    }
 
     BaseAbstractCalculateAlgorithm(boolean ifNeedSquare, boolean ifNeedTwoParamMultiply) {
 
@@ -96,7 +77,7 @@ import java.util.List;
     }
 
     /**
-     * 计算代价中的正则部分，λ∑θ^2，不包括θ0
+     * 计算代价中的正则部分L2，λ∑θ^2，不包括θ0
      * @param coefficientMatrix 结果矩阵
      * @return 代价中的正则部分
      */
@@ -187,24 +168,6 @@ import java.util.List;
             for (int valueIndex = 0; valueIndex < listSize; valueIndex++) {
                 matrix.setAsDouble(dataParamsList.get(listIndex).get(valueIndex), listIndex, valueIndex);
             }
-        }
-
-        return matrix;
-    }
-
-    /**
-     * 根据结果数据创建对应矩阵，该方法无需在子类中调用
-     * @param dataResults 结果数据
-     * @return 对应矩阵
-     */
-    Matrix createMatrixWithList(List<Double> dataResults) {
-
-        int resultSize = dataResults.size();
-
-        Matrix matrix = Matrix.Factory.zeros(resultSize, 1);
-
-        for (int valueIndex = 0; valueIndex < resultSize; valueIndex++) {
-            matrix.setAsDouble(dataResults.get(valueIndex), valueIndex, 0);
         }
 
         return matrix;

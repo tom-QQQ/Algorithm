@@ -1,0 +1,212 @@
+package algorithm.gradient.descent;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+/**
+ * @author Ning
+ * @date Create in 2018/7/8
+ */
+class BaseDataConstructForRegression extends BaseDataConstruct {
+
+    private boolean ifNeedSquare;
+    private boolean ifNeedTwoParamMultiply;
+
+    /**
+     * 数据构建构造器，是否需要添加平方项和两两参数相乘项
+     * @param ifNeedSquare 是否需要添加平方项
+     * @param ifNeedTwoParamMultiply 是否需要添加两两参数相乘项
+     */
+    BaseDataConstructForRegression(boolean ifNeedSquare, boolean ifNeedTwoParamMultiply) {
+
+        this.ifNeedSquare = ifNeedSquare;
+        this.ifNeedTwoParamMultiply = ifNeedTwoParamMultiply;
+    }
+
+    /**
+     * 给参数数组添加数据
+     * @param dataParamsList 参数数组
+     * @param values 一条数据
+     */
+    void addDataToDataParamsList(List<List<Double>> dataParamsList, Double...  values) {
+
+        List<Double> list = new ArrayList<>();
+        Collections.addAll(list, values);
+
+        if (ifNeedSquare) {
+            for (Double value : values) {
+                list.add(value*value);
+            }
+        }
+
+        if (ifNeedTwoParamMultiply) {
+            addArbitraryTwoParamMultiply(list, values.length);
+        }
+
+        dataParamsList.add(list);
+    }
+
+    /**
+     * 添加参数两两相乘项
+     * @param list 需要添加参数的列表
+     * @param originalSize 原始参数数量
+     */
+    private void addArbitraryTwoParamMultiply(List<Double> list, int originalSize) {
+
+        for (int firstIndex = 0; firstIndex < originalSize; firstIndex++) {
+
+            for (int secondIndex = firstIndex+1; secondIndex < originalSize; secondIndex++) {
+
+                list.add(list.get(firstIndex)*list.get(secondIndex));
+            }
+        }
+    }
+
+    /**
+     * 计算给定List<>中List的标准差
+     * @param dataParams 需要计算的数据
+     * @param averageValues 数据的平局数
+     * @return 方差list
+     */
+    private List<Double> calculateStandardDeviationList(List<List<Double>> dataParams, List<Double> averageValues) {
+
+        List<Double> standardDeviationList = new ArrayList<>(averageValues.size());
+
+        for (int valueIndex = 0; valueIndex < averageValues.size(); valueIndex++) {
+
+            Double standardDeviation = 0.0;
+            for (List<Double> valueList : dataParams) {
+                standardDeviation += calculateDeviationSquare(valueList.get(valueIndex), averageValues.get(valueIndex));
+            }
+
+            standardDeviationList.add(Math.sqrt(standardDeviation/dataParams.size()));
+        }
+        return standardDeviationList;
+    }
+
+    /**
+     * 计算两个值的平方差
+     * @param valueOne 第一个值
+     * @param valueTwo 第二个值
+     * @return 平方差
+     */
+    private double calculateDeviationSquare(double valueOne, double valueTwo) {
+
+        return (valueOne - valueTwo)*(valueOne - valueTwo);
+    }
+
+    /**
+     * 规格化数据，规格方法: (value - 平均值)/方差
+     * @param dataValues 要规格化的数据
+     * @param averageValues 数据的平均值
+     * @param squaredDifferenceList 数据的方差
+     * @return 规格化结果,每个list的第一项值为1
+     */
+    private List<List<Double>> getNormalizationParamsList(List<List<Double>> dataValues, List<Double> averageValues, List<Double> squaredDifferenceList) {
+
+        List<List<Double>> normalizationResults = initNormalizationResultsList(dataValues.size(), dataValues.get(0).size());
+
+        for (int valueIndex = 0; valueIndex < averageValues.size(); valueIndex++) {
+
+            for (int listIndex = 0; listIndex < dataValues.size(); listIndex++) {
+
+                Double normalizationValue = calculateNormalizationValue(dataValues.get(listIndex).get(valueIndex), averageValues.get(valueIndex), squaredDifferenceList.get(valueIndex));
+                normalizationResults.get(listIndex).add(normalizationValue);
+            }
+        }
+
+        return normalizationResults;
+    }
+
+    /**
+     * 创建一个新的数据list，并将第一个值初始化为1
+     * @param listSize 参数条数
+     * @param valueSize 参数个数
+     * @return list
+     */
+    private List<List<Double>> initNormalizationResultsList(int listSize, int valueSize) {
+
+        List<List<Double>> normalizationResultsList = new ArrayList<>(listSize);
+
+        for (int listIndex = 0; listIndex < listSize; listIndex++) {
+
+            List<Double> normalizationResults = new ArrayList<>(valueSize + 1);
+            normalizationResults.add(1.0);
+            normalizationResultsList.add(normalizationResults);
+        }
+
+        return normalizationResultsList;
+    }
+
+    /**
+     * 计算规格化值，公式(a-average)/方差
+     * @param value 初始值
+     * @param average 平均值
+     * @param squaredDifference 方差
+     * @return 规格化结果
+     */
+    private Double calculateNormalizationValue(Double value, Double average, Double squaredDifference) {
+
+        return (value - average)/squaredDifference;
+    }
+
+    /**
+     * 随机初始化系数结果的值，该方法无需在子类中调用
+     * @param coefficientsSize 系数个数
+     * @return 初始结果系数List
+     */
+    List<Double> initCoefficientList(int coefficientsSize) {
+
+        List<Double> coefficientList = new ArrayList<>(coefficientsSize);
+
+        for (int index = 0; index < coefficientsSize; index++) {
+            coefficientList.add(getNumberInSpecificRange());
+        }
+
+        return coefficientList;
+    }
+
+    /**
+     * 对原始数据进行规格化操作，并在每列数据前添加一个1，该方法无需在子类中调用
+     * @param dataParamsList 原始数据
+     * @return 规格化结果
+     */
+    List<List<Double>> calculateNormalizationData(List<List<Double>> dataParamsList) {
+
+        List<Double> averageValues = calculateAverageValueList(dataParamsList);
+        this.averageValues.addAll(averageValues);
+
+        List<Double> squaredDifferenceList = calculateStandardDeviationList(dataParamsList, averageValues);
+        this.squaredDifferenceValues.addAll(squaredDifferenceList);
+
+        if (averageValues.size() != squaredDifferenceList.size() || averageValues.size() != dataParamsList.get(0).size()) {
+            System.out.println("参数平均值数量和方差结果数量和参数list数量三者不相同");
+            return null;
+        }
+
+        return getNormalizationParamsList(dataParamsList, averageValues, squaredDifferenceList);
+    }
+
+    /**
+     * 计算给定List<>中List的平均值
+     * @param dataParams 需要计算的数据
+     * @return 平均值list
+     */
+    private List<Double> calculateAverageValueList(List<List<Double>> dataParams) {
+
+        List<Double> averageValues = new ArrayList<>(dataParams.get(0).size());
+
+        for (int valueIndex = 0; valueIndex < dataParams.get(0).size(); valueIndex++) {
+
+            Double sumValues = 0.0;
+            for (List<Double> valueList : dataParams) {
+                sumValues += valueList.get(valueIndex);
+            }
+
+            averageValues.add(sumValues/dataParams.size());
+        }
+
+        return averageValues;
+    }
+}

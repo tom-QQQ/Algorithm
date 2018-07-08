@@ -1,5 +1,7 @@
 package algorithm.gradient.descent;
 
+import org.ujmp.core.Matrix;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,8 +11,15 @@ import java.util.List;
  */
 class BaseExamine {
 
+    /**
+     * 神经网络的多个隐藏层对应的系数矩阵,包括最后一层隐藏层到结果层的系数矩阵，该层矩阵为1*m(最后一层隐藏层神经单元个数)
+     */
+    List<Matrix> hideCoefficientMatrices;
+
     List<Double> averageValues = new ArrayList<>();
     List<Double> squaredDifferenceValues = new ArrayList<>();
+
+    private Matrix dataMatrix;
 
 
     /**

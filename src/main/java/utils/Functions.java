@@ -26,7 +26,7 @@ public class Functions {
      * @param value 要计算的值
      * @return 计算结果
      */
-    public static double tanh(double value) {
+    public static double tanH(double value) {
 
         double ePowerNegativeX = Math.pow(Math.E, -value);
         double ePowerX = Math.pow(Math.E, value);
@@ -41,7 +41,7 @@ public class Functions {
      * @return 计算结果
      */
     public static double reLu(double value) {
-        return Math.min(0.0, value);
+        return Math.max(0.0, value);
     }
 
     /**
