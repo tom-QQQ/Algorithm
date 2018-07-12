@@ -1,6 +1,7 @@
 package algorithm.gradient.descent;
 
 import org.ujmp.core.Matrix;
+import org.ujmp.core.calculation.Calculation;
 
 import java.util.List;
 
@@ -26,24 +27,28 @@ abstract class BaseNatureNetworkAlgorithm extends BaseDataConstructForNatureNetw
 
     double calculateNatureNetworkResult(List<Double> dataParams) {
 
+
         dataMatrix = createMatrixWithList(dataParams);
 
-        return matrixMultiply(hideCoefficientMatrices.size()-1).getAsDouble(0, 0);
+        return matrixMultiply();
     }
 
     /**
-     * 递归计算从输入值到最后一层的输出矩阵
-     * @param index 最后一层的索引
+     * 计算从输入值到最后一层的结果
      * @return 结果
      */
-    private Matrix matrixMultiply(int index) {
+    private double matrixMultiply() {
 
-        if (index == 0) {
-            return activationFunction(hideCoefficientMatrices.get(index).times(dataMatrix));
+        // 输入的数据矩阵已经做第一项前加1处理，这里系数矩阵可以直接和其相乘
+        Matrix resultMatrix = hideCoefficientMatrices.get(0).mtimes(dataMatrix);
 
-        } else {
-            return activationFunction(hideCoefficientMatrices.get(index).times(matrixMultiply(--index)));
+        for (int index = 1; index < hideCoefficientMatrices.size(); index++) {
+
+            resultMatrix = addOneToList(resultMatrix);
+            resultMatrix = hideCoefficientMatrices.get(index).times(resultMatrix);
         }
+
+        return resultMatrix.getAsDouble(0, 0);
     }
 
     /**
@@ -54,8 +59,21 @@ abstract class BaseNatureNetworkAlgorithm extends BaseDataConstructForNatureNetw
      */
     private Matrix calculateActivatingResult(Matrix lastActivatingResult, int hideLayerNumber) {
 
+        lastActivatingResult = addOneToList(lastActivatingResult);
+
         Matrix currentLayerActivatingMatrix = hideCoefficientMatrices.get(hideLayerNumber);
 
         return activationFunction(currentLayerActivatingMatrix.times(lastActivatingResult));
+    }
+
+    /**
+     * 给激活矩阵的值前添加一个常数项1
+     * @param matrix 激活矩阵
+     */
+    private Matrix addOneToList(Matrix matrix) {
+
+        Matrix oneMatrix = Matrix.Factory.zeros(1, 1);
+        oneMatrix.setAsDouble(1.0, 0, 0);
+        return oneMatrix.appendHorizontally(Calculation.Ret.NEW, matrix);
     }
 }

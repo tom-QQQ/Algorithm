@@ -47,7 +47,8 @@ class BaseDataConstruct extends BaseExamine {
     }
 
     /**
-     * 根据结果数据创建对应矩阵，该方法无需在子类中调用
+     * 根据结果数据创建对应矩阵，该方法需要在子类中调用，神经网络使用该方法时，
+     * 需要给传入的数列第一项前添加一个常数项1.0，用于和系数矩阵中的多一列的常数相乘
      * @param dataResults 结果数据
      * @return 对应矩阵
      */

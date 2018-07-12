@@ -15,9 +15,11 @@ class BaseDataConstructForNatureNetwork extends BaseDataConstruct {
 
     BaseDataConstructForNatureNetwork(List<Double> dataList, List<Integer> hideUnitsAmount) {
 
+        // 此时dataList的size比之前+1
         this.dataMatrix = getNormalizationDataMatrix(dataList);
 
-        int column = dataList.size();
+        // 这里的-1是为了和之后的保持一致，下面的方法返回的结果会比之前加1
+        int column = dataList.size() - 1;
         for (Integer unitAmount : hideUnitsAmount) {
 
             Matrix unitCoefficient = constructCoefficientMatrix(unitAmount, column);
@@ -51,7 +53,7 @@ class BaseDataConstructForNatureNetwork extends BaseDataConstruct {
 
 
     /**
-     * 规格化数据并构建矩阵,行数为之前行数+1，添加常数项
+     * 规格化数据并构建矩阵,行数为之前行数+1，在第一个数值之前添加添加常数项1
      * @param dataList 原始数据
      * @return 规格化矩阵，第一个值为常熟项1.0
      */
