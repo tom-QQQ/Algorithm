@@ -1,5 +1,6 @@
 package algorithm.gradient.descent;
 
+import com.sun.xml.internal.bind.v2.TODO;
 import org.ujmp.core.Matrix;
 import org.ujmp.core.calculation.Calculation;
 
@@ -13,7 +14,7 @@ abstract class BaseNatureNetworkAlgorithm extends BaseDataConstructForNatureNetw
 
     private List<Integer> hideUnitsAmount;
 
-    BaseNatureNetworkAlgorithm(List<Double> dataList, List<Integer> hideUnitsAmount) {
+    BaseNatureNetworkAlgorithm(List<List<Double>> dataList, List<Integer> hideUnitsAmount) {
         super(dataList, hideUnitsAmount);
     }
 
@@ -25,30 +26,28 @@ abstract class BaseNatureNetworkAlgorithm extends BaseDataConstructForNatureNetw
     abstract Matrix activationFunction(Matrix matrix);
 
 
-    double calculateNatureNetworkResult(List<Double> dataParams) {
+    Matrix calculateNatureNetworkResult() {
 
 
-        dataMatrix = createMatrixWithList(dataParams);
-
-        return matrixMultiply();
+        return null;
     }
 
     /**
      * 计算从输入值到最后一层的结果
      * @return 结果
      */
-    private double matrixMultiply() {
+    private Matrix matrixMultiply() {
 
-        // 输入的数据矩阵已经做第一项前加1处理，这里系数矩阵可以直接和其相乘
+        // 输入的数据矩阵已经做第一项前加1处理，这里单独计算
         Matrix resultMatrix = hideCoefficientMatrices.get(0).mtimes(dataMatrix);
 
         for (int index = 1; index < hideCoefficientMatrices.size(); index++) {
 
-            resultMatrix = addOneToList(resultMatrix);
-            resultMatrix = hideCoefficientMatrices.get(index).times(resultMatrix);
+            resultMatrix = calculateActivatingResult(resultMatrix, index);
         }
 
-        return resultMatrix.getAsDouble(0, 0);
+        // 这里的计算结果应该是一个m*1的矩阵，
+        return resultMatrix;
     }
 
     /**
@@ -63,17 +62,17 @@ abstract class BaseNatureNetworkAlgorithm extends BaseDataConstructForNatureNetw
 
         Matrix currentLayerActivatingMatrix = hideCoefficientMatrices.get(hideLayerNumber);
 
-        return activationFunction(currentLayerActivatingMatrix.times(lastActivatingResult));
+        return activationFunction(lastActivatingResult.times(currentLayerActivatingMatrix));
     }
 
     /**
-     * 给激活矩阵的值前添加一个常数项1
+     * 给激活矩阵的值前添加一个值均为1的常数向量，使其能和带有常数项的系数矩阵相乘
      * @param matrix 激活矩阵
      */
     private Matrix addOneToList(Matrix matrix) {
 
-        Matrix oneMatrix = Matrix.Factory.zeros(1, 1);
+        Matrix oneMatrix = Matrix.Factory.zeros(matrix.getRowCount(), 1);
         oneMatrix.setAsDouble(1.0, 0, 0);
-        return oneMatrix.appendHorizontally(Calculation.Ret.NEW, matrix);
+        return oneMatrix.appendVertically(Calculation.Ret.NEW, matrix);
     }
 }

@@ -72,7 +72,7 @@ public class BaseAbstractCalculateAlgorithmTest {
     @Test
     public void createMatrixWithList() {
         LogisticRegression baseAlgorithm = new LogisticRegression(false, false);
-        Matrix matrix = baseAlgorithm.getParamsMatrix(list);
+        Matrix matrix = baseAlgorithm.constructDataMatrix(list);
 
         List<List<Double>> dataList = new ArrayList<>();
         List<Double> list = new ArrayList<>();
@@ -82,7 +82,7 @@ public class BaseAbstractCalculateAlgorithmTest {
         list.add(3.0);
         dataList.add(list);
 
-        Matrix powerMatrix = baseAlgorithm.getParamsMatrix(dataList);
+        Matrix powerMatrix = baseAlgorithm.constructDataMatrix(dataList);
 
         System.out.println(matrix.power(Calculation.Ret.NEW, powerMatrix));
     }

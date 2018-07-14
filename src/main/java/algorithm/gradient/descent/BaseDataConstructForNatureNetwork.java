@@ -11,35 +11,52 @@ import java.util.List;
  */
 class BaseDataConstructForNatureNetwork extends BaseDataConstruct {
 
+    /**
+     * 该矩阵包含了全部数据的值，m*(1+n)，m为数据条数，1为常数项1.0，n为每条数据的参数数量
+     */
     Matrix dataMatrix;
 
-    BaseDataConstructForNatureNetwork(List<Double> dataList, List<Integer> hideUnitsAmount) {
+    BaseDataConstructForNatureNetwork(List<List<Double>> dataList, List<Integer> hideUnitsNeuronsAmounts) {
+
+
+        // 这里的-1是为了和之后的保持一致，下面的方法返回的结果行会比之前加1(常数项)
+        int row = dataList.get(0).size() - 1;
+
+        for (int unitIndex = 0; unitIndex < hideUnitsNeuronsAmounts.size() - 1; unitIndex++) {
+
+            int column = hideUnitsNeuronsAmounts.get(unitIndex);
+            Matrix hideUnitCoefficient = constructMatrixWithRowPlusOne(row, column);
+            hideCoefficientMatrices.add(hideUnitCoefficient);
+            row = column;
+        }
+    }
+
+    private void noramlizationData(List<List<Double>> dataList) {
+
+        List<List<Double>> normalizationList;
 
         // 此时dataList的size比之前+1
-        this.dataMatrix = getNormalizationDataMatrix(dataList);
+        if (ifNeedNormalization) {
+            normalizationList = calculateNormalizationData(dataList);
 
-        // 这里的-1是为了和之后的保持一致，下面的方法返回的结果会比之前加1
-        int column = dataList.size() - 1;
-        for (Integer unitAmount : hideUnitsAmount) {
-
-            Matrix unitCoefficient = constructCoefficientMatrix(unitAmount, column);
-            hideCoefficientMatrices.add(unitCoefficient);
-            column = unitAmount;
+        } else {
+            normalizationList = dataList;
         }
 
-        Matrix resultCoefficientMatrix = constructCoefficientMatrix(1, column);
-        hideCoefficientMatrices.add(resultCoefficientMatrix);
+
+        this.dataMatrix = constructDataMatrix(normalizationList);
+
     }
 
     /**
-     * 创建一个指定行，指定列+1的系数矩阵，值为指定范围中的值
+     * 创建一个指定行+1(当前层的常数项)，指定列的系数矩阵，值为指定范围中的值
      * @param rowCount 下一层单元个数
      * @param columnCount 当前层单元个数
      * @return 当前层到下一层的计算系数矩阵
      */
-    private Matrix constructCoefficientMatrix(long rowCount, long columnCount) {
+    private Matrix constructMatrixWithRowPlusOne(long rowCount, long columnCount) {
 
-        Matrix coefficientMatrix = Matrix.Factory.zeros(rowCount, columnCount + 1);
+        Matrix coefficientMatrix = Matrix.Factory.zeros(rowCount + 1, columnCount);
         for (int rowIndex = 0; rowIndex < rowCount; rowIndex++) {
 
             for (int columnIndex = 0; columnIndex < columnCount; columnIndex++) {
@@ -50,6 +67,10 @@ class BaseDataConstructForNatureNetwork extends BaseDataConstruct {
 
         return coefficientMatrix;
     }
+
+
+
+    //========================以下为规格化List<Double>类型数据的规格方法=============================
 
 
     /**

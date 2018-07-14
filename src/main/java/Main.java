@@ -11,7 +11,7 @@ public class Main {
 
 //        KMeans.calculateExampleResult();
 
-        LinearRegression regression = new LinearRegression(true, false);
+        LinearRegression regression = new LinearRegression(false, false);
 
         regression.calculateExampleResult();
 

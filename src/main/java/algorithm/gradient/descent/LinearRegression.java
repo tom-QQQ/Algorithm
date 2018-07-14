@@ -334,7 +334,7 @@ public class LinearRegression extends BaseAbstractCalculateAlgorithm {
      */
     private Matrix calculateRegressionResultWithNormalEquation(List<List<Double>> dataParamsList, List<Double> dataResults) {
 
-        Matrix paramsMatrix = getParamsMatrix(dataParamsList);
+        Matrix paramsMatrix = constructDataMatrix(dataParamsList);
         Matrix resultsMatrix = createMatrixWithList(dataResults);
 
         Matrix transposeMatrix = paramsMatrix.transpose();

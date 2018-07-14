@@ -22,7 +22,13 @@ public class NatureNetwork extends BaseNatureNetworkAlgorithm {
     private static final String RE_LU = "ReLu";
     private static final String TAN_H = "tanH";
 
-    NatureNetwork(List<Double> dataList, List<Integer> hideUnitsAmount, String activationFunctionName) {
+    {
+        // 神经网络设置是否需要规格化数据
+        ifNeedNormalization = false;
+    }
+
+
+    NatureNetwork(List<List<Double>> dataList, List<Integer> hideUnitsAmount, String activationFunctionName) {
 
         super(dataList, hideUnitsAmount);
 
@@ -39,7 +45,6 @@ public class NatureNetwork extends BaseNatureNetworkAlgorithm {
 
             } else {
 
-//                System.out.println("激活函数名输入有误！！！");
                 throw new Exception("激活函数名输入有误！！！");
             }
 

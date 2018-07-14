@@ -64,7 +64,7 @@ import java.util.List;
             return;
         }
 
-        Matrix paramsMatrix = getParamsMatrix(normalizationDataList);
+        Matrix paramsMatrix = constructDataMatrix(normalizationDataList);
         Matrix resultsMatrix = createMatrixWithList(dataResults);
 
         List<Double> coefficientList = initCoefficientList(dataParamsList.get(0).size() + 1);
@@ -150,27 +150,6 @@ import java.util.List;
         double difference = previousCostValue - currentCostValue;
 
         return difference < convergence;
-    }
-
-    /**
-     * 根据完成规格化的数据创建矩阵，该方法无需在子类中调用
-     * @param dataParamsList 规格化完毕的数据
-     * @return 对应矩阵 m*n
-     */
-    Matrix getParamsMatrix(List<List<Double>> dataParamsList) {
-
-        int listSize = dataParamsList.get(0).size();
-
-        Matrix matrix = Matrix.Factory.zeros(dataParamsList.size(), listSize);
-
-        for (int listIndex = 0; listIndex < dataParamsList.size(); listIndex++) {
-
-            for (int valueIndex = 0; valueIndex < listSize; valueIndex++) {
-                matrix.setAsDouble(dataParamsList.get(listIndex).get(valueIndex), listIndex, valueIndex);
-            }
-        }
-
-        return matrix;
     }
 
     /**
