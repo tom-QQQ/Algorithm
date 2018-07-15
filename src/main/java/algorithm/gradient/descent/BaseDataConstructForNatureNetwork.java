@@ -16,11 +16,19 @@ class BaseDataConstructForNatureNetwork extends BaseDataConstruct {
      */
     Matrix dataMatrix;
 
-    BaseDataConstructForNatureNetwork(List<List<Double>> dataList, List<Integer> hideUnitsNeuronsAmounts) {
+    /**
+     * 数据结果矩阵，该矩阵的行列数和神经网络最后得到的结果矩阵的行列数必须相同，才可以进行对应值的计算
+     */
+    Matrix resultMatrix;
 
+    BaseDataConstructForNatureNetwork(List<List<Double>> dataLists, List<Integer> hideUnitsNeuronsAmounts, List<List<Double>> resultLists) throws Exception {
 
-        // 这里的-1是为了和之后的保持一致，下面的方法返回的结果行会比之前加1(常数项)
-        int row = dataList.get(0).size() - 1;
+        if (dataLists.size() != resultLists.size() || dataLists.get(0).size() != resultLists.get(0).size()) {
+            throw new Exception("参数数量和结果数量不同，或最后一层神经元数量和结果种类数量不同");
+        }
+
+        // 这里的-1是为了和之后的保持一致，下面的方法返回的结果行会比之前加1(偏置值)
+        int row = dataLists.get(0).size() - 1;
 
         for (int unitIndex = 0; unitIndex < hideUnitsNeuronsAmounts.size() - 1; unitIndex++) {
 
@@ -29,9 +37,17 @@ class BaseDataConstructForNatureNetwork extends BaseDataConstruct {
             hideCoefficientMatrices.add(hideUnitCoefficient);
             row = column;
         }
+
+        this.resultMatrix = constructDataMatrix(resultLists);
+
+        normalizationData(dataLists);
     }
 
-    private void noramlizationData(List<List<Double>> dataList) {
+    /**
+     * 正则化数据
+     * @param dataList 输入的数据
+     */
+    private void normalizationData(List<List<Double>> dataList) {
 
         List<List<Double>> normalizationList;
 

@@ -17,7 +17,7 @@ class BaseExamine {
     static boolean ifNeedNormalization;
 
     /**
-     * 神经网络的多个隐藏层对应的系数矩阵,包括最后一层隐藏层到结果层的系数矩阵，该层矩阵为m*1(最后一层隐藏层神经单元个数)
+     * 神经网络的多个隐藏层对应的系数矩阵,包括最后一层隐藏层到结果层的系数矩阵，该层矩阵为m*o(输出层神经单元个数，和结果矩阵中的列数量相同)
      */
     List<Matrix> hideCoefficientMatrices;
 

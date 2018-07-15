@@ -28,28 +28,23 @@ public class NatureNetwork extends BaseNatureNetworkAlgorithm {
     }
 
 
-    NatureNetwork(List<List<Double>> dataList, List<Integer> hideUnitsAmount, String activationFunctionName) {
+    NatureNetwork(List<List<Double>> dataLists, List<Integer> hideUnitsAmount, List<List<Double>> resultLists, String activationFunctionName) throws Exception {
 
-        super(dataList, hideUnitsAmount);
+        super(dataLists, hideUnitsAmount, resultLists);
 
-        try {
 
-            if (SIGMOID.equals(activationFunctionName) ) {
-                this.activationFunctionType = 1;
+        if (SIGMOID.equals(activationFunctionName) ) {
+            this.activationFunctionType = 1;
 
-            } else if (RE_LU.equals(activationFunctionName)) {
-                this.activationFunctionType = 2;
+        } else if (RE_LU.equals(activationFunctionName)) {
+            this.activationFunctionType = 2;
 
-            } else if (TAN_H.equals(activationFunctionName)) {
-                this.activationFunctionType = 3;
+        } else if (TAN_H.equals(activationFunctionName)) {
+            this.activationFunctionType = 3;
 
-            } else {
+        } else {
 
-                throw new Exception("激活函数名输入有误！！！");
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
+            throw new Exception("激活函数名输入有误！！！");
         }
 
     }
