@@ -66,7 +66,7 @@ class BaseDataConstruct extends BaseExamine {
     }
 
     /**
-     * 根据完成规格化的数据构造矩阵，该方法无需在子类中调用
+     * 根据完成规格化或不需要规格化的数据构造矩阵，该方法无需在子类中调用，该方法不会增加偏置项
      * @param dataParamsList 规格化完毕的数据
      * @return 对应矩阵 m*n
      */

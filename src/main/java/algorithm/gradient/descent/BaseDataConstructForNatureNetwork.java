@@ -12,7 +12,7 @@ import java.util.List;
 class BaseDataConstructForNatureNetwork extends BaseDataConstruct {
 
     /**
-     * 该矩阵包含了全部数据的值，m*(1+n)，m为数据条数，1为常数项1.0，n为每条数据的参数数量
+     * 该矩阵包含了全部数据的值，m*(1+n)，m为数据条数，1对应常数项，n为每条数据的参数数量
      */
     Matrix dataMatrix;
 
@@ -21,33 +21,37 @@ class BaseDataConstructForNatureNetwork extends BaseDataConstruct {
      */
     Matrix resultMatrix;
 
+    /**
+     * 反向传播时需要用到包含偏置项的每层的值和最后一层的不包含偏置项的结果层的值,size = 总层数(包括输入层和输出层)个数
+     */
+    List<Matrix> hypothesisMatrices = new ArrayList<>();
+
     BaseDataConstructForNatureNetwork(List<List<Double>> dataLists, List<Integer> hideUnitsNeuronsAmounts, List<List<Double>> resultLists) throws Exception {
 
         if (dataLists.size() != resultLists.size() || dataLists.get(0).size() != resultLists.get(0).size()) {
             throw new Exception("参数数量和结果数量不同，或最后一层神经元数量和结果种类数量不同");
         }
 
-        // 这里的-1是为了和之后的保持一致，下面的方法返回的结果行会比之前加1(偏置值)
+        normalizationAndSaveData(dataLists);
+
+        // 这里的-1是为了和之后的保持一致，下面的循环方法返回的结果列会比之前加1(增加偏置项)
         int row = dataLists.get(0).size() - 1;
 
-        for (int unitIndex = 0; unitIndex < hideUnitsNeuronsAmounts.size() - 1; unitIndex++) {
+        for (int column : hideUnitsNeuronsAmounts) {
 
-            int column = hideUnitsNeuronsAmounts.get(unitIndex);
             Matrix hideUnitCoefficient = constructMatrixWithRowPlusOne(row, column);
             hideCoefficientMatrices.add(hideUnitCoefficient);
             row = column;
         }
 
         this.resultMatrix = constructDataMatrix(resultLists);
-
-        normalizationData(dataLists);
     }
 
     /**
-     * 正则化数据
+     * 正则化并保存数据，会给每个list第一项前加一项偏置值
      * @param dataList 输入的数据
      */
-    private void normalizationData(List<List<Double>> dataList) {
+    private void normalizationAndSaveData(List<List<Double>> dataList) {
 
         List<List<Double>> normalizationList;
 
@@ -56,16 +60,15 @@ class BaseDataConstructForNatureNetwork extends BaseDataConstruct {
             normalizationList = calculateNormalizationData(dataList);
 
         } else {
-            normalizationList = dataList;
+            normalizationList = addOneToLists(dataList);
         }
-
 
         this.dataMatrix = constructDataMatrix(normalizationList);
 
     }
 
     /**
-     * 创建一个指定行+1(当前层的常数项)，指定列的系数矩阵，值为指定范围中的值
+     * 创建一个指定行+1(当前层的常数项，第一项)，指定列的系数矩阵，值为指定范围中的值
      * @param rowCount 下一层单元个数
      * @param columnCount 当前层单元个数
      * @return 当前层到下一层的计算系数矩阵
@@ -73,7 +76,7 @@ class BaseDataConstructForNatureNetwork extends BaseDataConstruct {
     private Matrix constructMatrixWithRowPlusOne(long rowCount, long columnCount) {
 
         Matrix coefficientMatrix = Matrix.Factory.zeros(rowCount + 1, columnCount);
-        for (int rowIndex = 0; rowIndex < rowCount; rowIndex++) {
+        for (int rowIndex = 0; rowIndex < rowCount + 1; rowIndex++) {
 
             for (int columnIndex = 0; columnIndex < columnCount; columnIndex++) {
 
@@ -82,6 +85,26 @@ class BaseDataConstructForNatureNetwork extends BaseDataConstruct {
         }
 
         return coefficientMatrix;
+    }
+
+    /**
+     * 给不需要规格化的每项数据list增加一个偏置项1.0
+     * @param dataList 未规格化的原始数据
+     * @return 每项前添加偏置值的新lists
+     */
+    private List<List<Double>> addOneToLists(List<List<Double>> dataList) {
+
+        List<List<Double>> resultList = new ArrayList<>();
+
+        for (List<Double> list : dataList) {
+
+            List<Double> originalList = new ArrayList<>();
+            originalList.add(1.0);
+            originalList.addAll(list);
+            resultList.add(originalList);
+        }
+
+        return resultList;
     }
 
 

@@ -17,14 +17,12 @@ class BaseExamine {
     static boolean ifNeedNormalization;
 
     /**
-     * 神经网络的多个隐藏层对应的系数矩阵,包括最后一层隐藏层到结果层的系数矩阵，该层矩阵为m*o(输出层神经单元个数，和结果矩阵中的列数量相同)
+     * 神经网络的多个隐藏层对应的系数矩阵,包括最后一层隐藏层到结果层的系数矩阵，个数为总层数(包括输入层和输出层)-1
      */
-    List<Matrix> hideCoefficientMatrices;
+    List<Matrix> hideCoefficientMatrices = new ArrayList<>();
 
     List<Double> averageValues = new ArrayList<>();
     List<Double> squaredDifferenceValues = new ArrayList<>();
-
-    private Matrix dataMatrix;
 
 
     /**

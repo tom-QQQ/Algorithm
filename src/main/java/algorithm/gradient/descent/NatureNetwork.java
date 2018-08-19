@@ -28,9 +28,9 @@ public class NatureNetwork extends BaseNatureNetworkAlgorithm {
     }
 
 
-    NatureNetwork(List<List<Double>> dataLists, List<Integer> hideUnitsAmount, List<List<Double>> resultLists, String activationFunctionName) throws Exception {
+    NatureNetwork(List<List<Double>> dataLists, List<Integer> hideUnitsAmounts, List<List<Double>> resultLists, String activationFunctionName) throws Exception {
 
-        super(dataLists, hideUnitsAmount, resultLists);
+        super(dataLists, hideUnitsAmounts, resultLists);
 
 
         if (SIGMOID.equals(activationFunctionName) ) {
