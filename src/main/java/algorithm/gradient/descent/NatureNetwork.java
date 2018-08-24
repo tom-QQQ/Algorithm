@@ -28,10 +28,7 @@ public class NatureNetwork extends BaseNatureNetworkAlgorithm {
     }
 
 
-    NatureNetwork(List<List<Double>> dataLists, List<Integer> hideUnitsAmounts, List<List<Double>> resultLists, String activationFunctionName) throws Exception {
-
-        super(dataLists, hideUnitsAmounts, resultLists);
-
+    public NatureNetwork(String activationFunctionName) {
 
         if (SIGMOID.equals(activationFunctionName) ) {
             this.activationFunctionType = 1;
@@ -44,15 +41,44 @@ public class NatureNetwork extends BaseNatureNetworkAlgorithm {
 
         } else {
 
-            throw new Exception("激活函数名输入有误！！！");
+            System.out.println("激活函数名输入有误！！！");
+            System.exit(0);
         }
 
     }
 
+    /**
+     * 计算测试数据的结果
+     */
     public void calculateExampleResult() {
 
-        List<Double> dataList = new ArrayList<>();
-        dataList.add(5.0);
+        List<List<Double>> dataList = new ArrayList<>();
+        addDataToList(dataList, 0.0, 0.0);
+        addDataToList(dataList, 0.0, 1.0);
+        addDataToList(dataList, 1.0, 1.0);
+        addDataToList(dataList, 1.0, 1.0);
+
+
+        List<List<Double>> resultLists = new ArrayList<>();
+        addDataToList(dataList, 1.0);
+        addDataToList(dataList, 0.0);
+        addDataToList(dataList, 0.0);
+        addDataToList(dataList, 1.0);
+
+        List<Integer> hideUnitsNeuronsAmounts = new ArrayList<>();
+        hideUnitsNeuronsAmounts.add(2);
+        hideUnitsNeuronsAmounts.add(1);
+
+        try {
+
+            dataConstructForNatureNetwork(dataList, hideUnitsNeuronsAmounts, resultLists);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(0);
+        }
+
+        calculateNatureNetworkResult();
 
     }
 

@@ -21,7 +21,8 @@ public class LinearRegression extends BaseAbstractCalculateAlgorithm {
      */
     public LinearRegression(boolean ifNeedSquare, boolean ifNeedTwoParamMultiply) {
 
-        super(ifNeedSquare, ifNeedTwoParamMultiply);
+        super.ifNeedSquare = ifNeedSquare;
+        super.ifNeedTwoParamMultiply = ifNeedTwoParamMultiply;
     }
 
     public void calculateExampleResult() {

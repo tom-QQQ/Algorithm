@@ -13,11 +13,6 @@ import java.util.List;
  */
 abstract class BaseNatureNetworkAlgorithm extends BaseDataConstructForNatureNetwork {
 
-
-    BaseNatureNetworkAlgorithm(List<List<Double>> dataList, List<Integer> hideUnitsAmount, List<List<Double>> resultLists) throws Exception {
-        super(dataList, hideUnitsAmount, resultLists);
-    }
-
     /**
      * 激活函数
      * @param matrix 需要处理的矩阵
@@ -26,6 +21,9 @@ abstract class BaseNatureNetworkAlgorithm extends BaseDataConstructForNatureNetw
     abstract Matrix activationFunction(Matrix matrix);
 
 
+    /**
+     * 迭代计算各层权重系数矩阵
+     */
     void calculateNatureNetworkResult() {
 
         int cycleTimes = 0;
@@ -44,18 +42,24 @@ abstract class BaseNatureNetworkAlgorithm extends BaseDataConstructForNatureNetw
 
             double newCost = calculateCostForNatureNetWork();
 
-            if (newCost - previousCost < convergence || cycleTimes > maxLoop) {
+            if (newCost - previousCost < convergence) {
 
+                System.out.println("达到目标精确值，迭代停止，迭代次数：" + cycleTimes + "，最终去除正则部分代价：" + calculateFinalCostWithoutRegulationPart(newCost));
+                Utils.printList(hideCoefficientMatrices);
+                break;
+
+            } else if (cycleTimes > maxLoop) {
+                System.out.println("达到最大迭代次数，迭代停止，最终去除正则部分代价：" + calculateFinalCostWithoutRegulationPart(newCost));
                 Utils.printList(hideCoefficientMatrices);
                 break;
             }
 
+            cycleTimes++;
         }
     }
 
 
-
-    // =========================神经网络代价相关计算，包括记录每层添加偏置项的结果==================
+    // =========================神经网络代价相关计算，包括记录每层添加偏置项的结果=========================
 
     /**
      * 计算神经网络算法的代价值
@@ -167,7 +171,21 @@ abstract class BaseNatureNetworkAlgorithm extends BaseDataConstructForNatureNetw
         return result;
     }
 
-    // =========================神经网络反向传播计算==================
+    /**
+     * 计算最终不包含正则部分的代价
+     * @param finalCost 正则代价
+     * @return 去除正则部分的代价
+     */
+    private double calculateFinalCostWithoutRegulationPart(double finalCost) {
+
+        double finalRegulationCostValue = calculateRegulationPartValue();
+
+        return finalCost - finalRegulationCostValue/dataMatrix.getRowCount();
+    }
+
+
+
+    // =========================神经网络反向传播相关计算=========================
 
     /**
      * 计算每层的预测误差，由于反向传播的特点，第一个预测误差为输出层的预测误差，最后一个预测误差为第一层隐藏层的预测误差，共总层数-1个
@@ -199,6 +217,7 @@ abstract class BaseNatureNetworkAlgorithm extends BaseDataConstructForNatureNetw
             // δ(l) = δ(l+1) * θ(l)^T .* g'(z(l))
             Matrix predictionErrorMatrix = latestPredictionError.mtimes(currentLayerCoefficientMatrix.transpose()).times(activeFunctionDerivative);
 
+            predictionErrorMatrices.add(predictionErrorMatrix);
         }
 
         return predictionErrorMatrices;
@@ -239,7 +258,9 @@ abstract class BaseNatureNetworkAlgorithm extends BaseDataConstructForNatureNetw
             Matrix ignoreRegulationItemCoefficientMatrix = getIgnoreRegulationItemCoefficientMatrix(index);
 
             // D(l) = ( Δ(l) + λθ(l) )/m
-            weightUpdateMatrices.add((weightGradientMatrices.get(index).plus(ignoreRegulationItemCoefficientMatrix.times(lambda))).divide(dataMatrix.getRowCount()));
+            Matrix weightUpdateMatrix = (weightGradientMatrices.get(index).plus(ignoreRegulationItemCoefficientMatrix.times(lambda))).divide(dataMatrix.getRowCount());
+
+            weightUpdateMatrices.add(weightUpdateMatrix);
         }
 
         return weightUpdateMatrices;
@@ -262,7 +283,7 @@ abstract class BaseNatureNetworkAlgorithm extends BaseDataConstructForNatureNetw
 
     /**
      * 使用权值更新量更新每层的系数矩阵
-     * @param weightUpdateMatrices 各层权值的更新量
+     * @param weightUpdateMatrices 各层权值的更新量，顺序
      */
     private void updateCoefficientMatrices(List<Matrix> weightUpdateMatrices) {
 

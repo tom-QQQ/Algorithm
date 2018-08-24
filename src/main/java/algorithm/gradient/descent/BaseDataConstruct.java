@@ -34,6 +34,13 @@ class BaseDataConstruct extends BaseExamine {
         ifNeedNormalization = true;
     }
 
+    void addDataToList(List<List<Double>> dataParamsList, Double...  values) {
+
+        List<Double> list = new ArrayList<>();
+        Collections.addAll(list, values);
+        dataParamsList.add(list);
+    }
+
     /**
      * 生成指定范围内的随机值
      * @return 指定范围的随机值

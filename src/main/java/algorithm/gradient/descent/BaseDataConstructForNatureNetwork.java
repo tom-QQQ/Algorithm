@@ -26,9 +26,17 @@ class BaseDataConstructForNatureNetwork extends BaseDataConstruct {
      */
     List<Matrix> hypothesisMatrices = new ArrayList<>();
 
-    BaseDataConstructForNatureNetwork(List<List<Double>> dataLists, List<Integer> hideUnitsNeuronsAmounts, List<List<Double>> resultLists) throws Exception {
+    /**
+     * 数据构建方法，用于子类调用初始化数据
+     * @param dataLists 输入数据
+     * @param hideUnitsNeuronsAmounts 隐藏层各层的神经元数量
+     * @param resultLists 目标结果
+     * @throws Exception
+     */
+    void dataConstructForNatureNetwork(List<List<Double>> dataLists, List<Integer> hideUnitsNeuronsAmounts, List<List<Double>> resultLists) throws
+            Exception {
 
-        if (dataLists.size() != resultLists.size() || dataLists.get(0).size() != resultLists.get(0).size()) {
+        if (dataLists.size() != resultLists.size() || hideUnitsNeuronsAmounts.get(hideUnitsNeuronsAmounts.size() - 1) != resultLists.get(0).size()) {
             throw new Exception("参数数量和结果数量不同，或最后一层神经元数量和结果种类数量不同");
         }
 
@@ -109,7 +117,7 @@ class BaseDataConstructForNatureNetwork extends BaseDataConstruct {
 
 
 
-    //========================以下为规格化List<Double>类型数据的规格方法=============================
+    //=============================以下为规格化List<Double>类型数据的规格方法=============================
 
 
     /**

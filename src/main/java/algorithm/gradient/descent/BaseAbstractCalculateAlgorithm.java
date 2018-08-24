@@ -18,11 +18,6 @@ import java.util.List;
      */
     private int referenceInitAndActualTimes = 5;
 
-    BaseAbstractCalculateAlgorithm(boolean ifNeedSquare, boolean ifNeedTwoParamMultiply) {
-
-        super(ifNeedSquare, ifNeedTwoParamMultiply);
-    }
-
     /**
      * 计算代价,Jθ
      * @param paramsMatrix 数据矩阵 m*n

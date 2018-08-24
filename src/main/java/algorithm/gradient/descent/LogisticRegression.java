@@ -15,7 +15,8 @@ public class LogisticRegression extends BaseAbstractCalculateAlgorithm {
 
     public LogisticRegression(boolean ifNeedSquare, boolean ifNeedTwoParamMultiply) {
 
-        super(ifNeedSquare, ifNeedTwoParamMultiply);
+        super.ifNeedSquare = ifNeedSquare;
+        super.ifNeedTwoParamMultiply = ifNeedTwoParamMultiply;
     }
 
     public void calculateExampleResult() {

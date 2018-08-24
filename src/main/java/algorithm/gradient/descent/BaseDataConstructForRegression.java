@@ -10,19 +10,14 @@ import java.util.List;
  */
 class BaseDataConstructForRegression extends BaseDataConstruct {
 
-    private boolean ifNeedSquare;
-    private boolean ifNeedTwoParamMultiply;
-
     /**
-     * 数据构建构造器，是否需要添加平方项和两两参数相乘项
-     * @param ifNeedSquare 是否需要添加平方项
-     * @param ifNeedTwoParamMultiply 是否需要添加两两参数相乘项
+     * 是否需要添加平方项
      */
-    BaseDataConstructForRegression(boolean ifNeedSquare, boolean ifNeedTwoParamMultiply) {
-
-        this.ifNeedSquare = ifNeedSquare;
-        this.ifNeedTwoParamMultiply = ifNeedTwoParamMultiply;
-    }
+    boolean ifNeedSquare;
+    /**
+     * 是否需要添加两两参数相乘项
+     */
+    boolean ifNeedTwoParamMultiply;
 
     /**
      * 给参数数组添加数据

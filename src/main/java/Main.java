@@ -1,5 +1,6 @@
 import algorithm.gradient.descent.LinearRegression;
 import algorithm.gradient.descent.LogisticRegression;
+import algorithm.gradient.descent.NatureNetwork;
 
 /**
  * @author Ning
@@ -11,9 +12,9 @@ public class Main {
 
 //        KMeans.calculateExampleResult();
 
-        LinearRegression regression = new LinearRegression(false, false);
+//        LinearRegression regression = new LinearRegression(false, false);
 
-        regression.calculateExampleResult();
+//        regression.calculateExampleResult();
 
 //        regression.verificationResult();
 
@@ -21,6 +22,9 @@ public class Main {
 //        logisticRegression.calculateExampleResult();
 //
 //        logisticRegression.verificationResult();
+
+        NatureNetwork natureNetwork = new NatureNetwork("sigmoid");
+        natureNetwork.calculateExampleResult();
 
     }
 }
